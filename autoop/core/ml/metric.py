@@ -2,24 +2,79 @@ from abc import ABC, abstractmethod
 from typing import Any
 import numpy as np
 
+# List of available metrics
 METRICS = [
     "mean_squared_error",
     "accuracy",
-] # add the names (in strings) of the metrics you implement
+]
 
 def get_metric(name: str):
-    # Factory function to get a metric by name.
-    # Return a metric instance given its str name.
-    raise NotImplementedError("To be implemented.")
-
-class Metric(...):
-    """Base class for all metrics.
-    """
-    # your code here
-    # remember: metrics take ground truth and prediction as input and return a real number
-
-    def __call__(self):
-        raise NotImplementedError("To be implemented.")
-
-# add here concrete implementations of the Metric class
+    """Factory function to get a metric by name.
     
+    Args:
+        name (str): The name of the metric.
+        
+    Returns:
+        Metric: An instance of the requested metric.
+        
+    Raises:
+        ValueError: If the metric name is not recognized.
+    """
+    metrics = {
+        "mean_squared_error": MeanSquaredError(),
+        "accuracy": Accuracy(),
+    }
+    if name in metrics:
+        return metrics[name]
+    else:
+        raise ValueError(f"Metric '{name}' is not recognized. Available metrics are: {list(metrics.keys())}")
+
+class Metric(ABC):
+    """Base class for all metrics."""
+    
+    @abstractmethod
+    def __call__(self, y_true: Any, y_pred: Any) -> float:
+        """Compute the metric.
+        
+        Args:
+            y_true (Any): Ground truth values.
+            y_pred (Any): Predicted values.
+            
+        Returns:
+            float: Computed metric value.
+        """
+        pass
+
+class MeanSquaredError(Metric):
+    """Mean Squared Error metric."""
+    
+    def __call__(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
+        """Compute the Mean Squared Error.
+        
+        Args:
+            y_true (np.ndarray): Ground truth values.
+            y_pred (np.ndarray): Predicted values.
+            
+        Returns:
+            float: Mean Squared Error.
+        """
+        mse = np.mean((y_true - y_pred) ** 2)
+        return mse
+
+class Accuracy(Metric):
+    """Accuracy metric."""
+    
+    def __call__(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
+        """Compute the Accuracy.
+        
+        Args:
+            y_true (np.ndarray): Ground truth values.
+            y_pred (np.ndarray): Predicted values.
+            
+        Returns:
+            float: Accuracy.
+        """
+        correct_predictions = np.sum(y_true == y_pred)
+        total_predictions = len(y_true)
+        accuracy = correct_predictions / total_predictions
+        return accuracy
