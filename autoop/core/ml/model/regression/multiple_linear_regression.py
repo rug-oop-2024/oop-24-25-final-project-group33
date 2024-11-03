@@ -1,37 +1,23 @@
 import numpy as np
-
-from pydantic import BaseModel, Field
-
+from pydantic import BaseModel, PrivateAttr
+from sklearn.linear_model import LinearRegression
+from typing import Optional
 
 class MultipleLinearRegression(BaseModel):
-    def __init__(self):
-        super().__init__()
-        self._parameters = {}
+    _model: Optional[LinearRegression] = PrivateAttr(default=None)
+    _parameters: dict = PrivateAttr(default_factory=dict)
+
+    def fit(self, observations: np.ndarray, ground_truth: np.ndarray):
+        self._model = LinearRegression()
+        self._model.fit(observations, ground_truth)
+        self._parameters["coefficients"] = self._model.coef_
+        self._parameters["intercept"] = self._model.intercept_
+
+    def predict(self, observations: np.ndarray) -> np.ndarray:
+        if self._model is None:
+            raise ValueError("The model has not been fitted yet.")
+        return self._model.predict(observations)
 
     @property
     def parameters(self):
         return self._parameters
-
-    def fit(self, observations: np.ndarray, ground_truth: np.ndarray):
-        ones_column = np.ones((observations.shape[0], 1))
-        X = np.hstack([observations, ones_column])
-
-        XtX = X.T @ X
-        XtX_inv = np.linalg.inv(XtX)
-        XtY = X.T @ ground_truth
-        w = XtX_inv @ XtY
-
-        self._parameters["coefficients"] = w[:-1]
-        self._parameters["intercept"] = w[-1]
-
-    def predict(self, observations: np.ndarray) -> np.ndarray:
-        ones_column = np.ones((observations.shape[0], 1))
-        X = np.hstack([observations, ones_column])
-
-        w = np.hstack(
-            [self._parameters["coefficients"],
-             self._parameters["intercept"]]
-             )
-        predictions = X @ w
-
-        return predictions

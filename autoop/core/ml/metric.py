@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any
 import numpy as np
+from sklearn.metrics import accuracy_score
 
 # List of available metrics
 METRICS = [
@@ -49,17 +50,14 @@ class MeanSquaredError(Metric):
     """Mean Squared Error metric."""
     
     def __call__(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
-        """Compute the Mean Squared Error.
-        
-        Args:
-            y_true (np.ndarray): Ground truth values.
-            y_pred (np.ndarray): Predicted values.
-            
-        Returns:
-            float: Mean Squared Error.
-        """
+        """Compute the Mean Squared Error."""
         mse = np.mean((y_true - y_pred) ** 2)
         return mse
+
+    def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
+        """Compute the Mean Squared Error."""
+        return self.__call__(y_true, y_pred)
+
 
 class Accuracy(Metric):
     """Accuracy metric."""
@@ -74,7 +72,5 @@ class Accuracy(Metric):
         Returns:
             float: Accuracy.
         """
-        correct_predictions = np.sum(y_true == y_pred)
-        total_predictions = len(y_true)
-        accuracy = correct_predictions / total_predictions
+        accuracy = accuracy_score(y_true, y_pred)
         return accuracy
