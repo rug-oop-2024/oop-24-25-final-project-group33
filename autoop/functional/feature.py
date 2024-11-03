@@ -11,7 +11,7 @@ def detect_feature_types(dataset: Dataset) -> List[Feature]:
     Returns:
         List[Feature]: List of Feature objects with their types.
     """
-    df = dataset.data
+    df = dataset.read()
     features = []
     
     # Identify numerical columns
