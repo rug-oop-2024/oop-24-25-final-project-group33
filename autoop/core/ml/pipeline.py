@@ -1,3 +1,4 @@
+import streamlit as st
 from typing import List
 import pickle
 
@@ -10,16 +11,14 @@ from autoop.functional.preprocessing import preprocess_features
 import numpy as np
 
 
-class Pipeline():
-    
+class Pipeline:
     def __init__(self, 
                  metrics: List[Metric],
                  dataset: Dataset, 
                  model: Model,
                  input_features: List[Feature],
                  target_feature: Feature,
-                 split=0.8,
-                 ):
+                 split=0.8):
         self._dataset = dataset
         self._model = model
         self._input_features = input_features
@@ -49,8 +48,7 @@ Pipeline(
 
     @property
     def artifacts(self) -> List[Artifact]:
-        """Used to get the artifacts generated during the pipeline execution to be saved
-        """
+        """Used to get the artifacts generated during the pipeline execution to be saved."""
         artifacts = []
         for name, artifact in self._artifacts.items():
             artifact_type = artifact.get("type")
@@ -62,6 +60,7 @@ Pipeline(
                 data = artifact["scaler"]
                 data = pickle.dumps(data)
                 artifacts.append(Artifact(name=name, data=data))
+        
         pipeline_data = {
             "input_features": self._input_features,
             "target_feature": self._target_feature,
@@ -69,6 +68,7 @@ Pipeline(
         }
         artifacts.append(Artifact(name="pipeline_config", data=pickle.dumps(pipeline_data)))
         artifacts.append(self._model.to_artifact(name=f"pipeline_model_{self._model.type}"))
+        
         return artifacts
     
     def _register_artifact(self, name: str, artifact):
@@ -138,3 +138,14 @@ Pipeline(
             "train_predictions": train_predictions,
             "test_predictions": test_predictions,
         }
+
+    def save_pipeline(self, name: str, version: str):
+        """Converts the pipeline into an artifact and allows it to be saved."""
+        pipeline_artifact = {
+            "name": name,
+            "version": version,
+            "pipeline_data": self.artifacts
+        }
+        artifact_data = pickle.dumps(pipeline_artifact)
+        artifact = Artifact(name=f"{name}_v{version}", data=artifact_data)
+        return artifact
