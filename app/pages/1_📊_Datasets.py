@@ -22,6 +22,10 @@ if 'dataset_files' not in st.session_state:
 def refresh_datasets():
     st.session_state['dataset_files'] = get_dataset_files()
 
+# **Session state variable to trigger rerun**
+if 'refresh' not in st.session_state:
+    st.session_state.refresh = 0
+
 # Section: List Available Datasets
 st.subheader("Available Datasets")
 
@@ -29,7 +33,7 @@ if st.session_state['dataset_files']:
     # Create a list of dataset names (remove .csv extension)
     dataset_options = [os.path.splitext(f)[0] for f in st.session_state['dataset_files']]
 
-    # **Before the selectbox, check if the selected dataset is still valid**
+    # Before the selectbox, check if the selected dataset is still valid
     if 'selected_dataset_name' in st.session_state:
         if st.session_state.selected_dataset_name not in dataset_options:
             if dataset_options:
@@ -64,11 +68,10 @@ if st.session_state['dataset_files']:
             st.success(f"Deleted dataset: {selected_dataset_name}")
             # Refresh the dataset list
             refresh_datasets()
-            # **Do not modify st.session_state.selected_dataset_name here**
+            # Increment refresh to trigger rerun
+            st.session_state.refresh += 1
         else:
             st.error(f"Dataset '{selected_dataset_name}' does not exist.")
-        
-
 
     # Button to delete the selected dataset
     if st.button("Delete Dataset"):
@@ -118,11 +121,19 @@ if uploaded_file:
                 # Increment the counters to reset the widgets
                 st.session_state.uploader_counter += 1
                 st.session_state.dataset_name_counter += 1
-            
-
+                # Increment refresh to trigger rerun
+                st.session_state.refresh += 1
         else:
             st.error("Please enter a dataset name.")
 
     # Button to save the dataset
     if st.button("Save Dataset"):
         save_dataset()
+
+# Add a refresh button at the bottom of the page
+if st.button("Refresh Page"):
+    # Increment refresh to trigger rerun
+    st.session_state.refresh += 1
+
+# **Add description under the refresh button**
+st.write("Refresh the page to see your changes.")
