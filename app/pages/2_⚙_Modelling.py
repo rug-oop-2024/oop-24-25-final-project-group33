@@ -24,6 +24,8 @@ from sklearn.metrics import (
     r2_score,
 )
 import pickle
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Set page configuration
 st.set_page_config(page_title="Modelling", page_icon="📈")
@@ -184,5 +186,48 @@ if datasets:
                 pickle.dump(model, model_file)
 
             st.success(f"Pipeline '{pipeline_name}' (version {pipeline_version}) has been saved successfully.")
+
+            # Visualization for regression
+            if task_type == "regression":
+                st.write("### Prediction vs Actual Plot")
+                y_pred = model.predict(X_test)
+
+                # Calculate additional statistics
+                mae = mean_absolute_error(y_test, y_pred)
+                mse = mean_squared_error(y_test, y_pred)
+                r2 = r2_score(y_test, y_pred)
+
+                # Plot the predictions vs actual values and distributions
+                fig, ax = plt.subplots(1, 3, figsize=(18, 6))
+
+                # Scatter plot of Actual vs Predicted
+                ax[0].scatter(y_test, y_pred, alpha=0.6, edgecolor="k", label="Predictions")
+                ax[0].plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--', label="Perfect Fit Line")
+                ax[0].set_xlabel("Actual Values")
+                ax[0].set_ylabel("Predicted Values")
+                ax[0].set_title(f"Prediction vs Actual for {selected_model_name}")
+                ax[0].legend(loc="upper left")
+
+                # Add a text box with metrics to the main scatter plot in the bottom right corner
+                textstr = f"Mean Absolute Error: {mae:.2f}\nMean Squared Error: {mse:.2f}\nR² Score: {r2:.2f}"
+                props = dict(boxstyle='round', facecolor='white', alpha=0.7)
+                ax[0].text(0.95, 0.05, textstr, transform=ax[0].transAxes, fontsize=10,
+                        verticalalignment='bottom', horizontalalignment='right', bbox=props)
+
+                # Plot 2: Actual Distribution
+                sns.histplot(y_test, kde=True, color="blue", ax=ax[1], label="Actual")
+                ax[1].set_title("Actual Values Distribution")
+                ax[1].set_xlabel("Actual Values")
+                ax[1].legend()
+
+                # Plot 3: Predicted Distribution
+                sns.histplot(y_pred, kde=True, color="green", ax=ax[2], label="Predicted")
+                ax[2].set_title("Predicted Values Distribution")
+                ax[2].set_xlabel("Predicted Values")
+                ax[2].legend()
+
+                # Display the figure
+                st.pyplot(fig)
+
 else:
     st.write("No datasets available. Please upload a dataset to start modeling.")
