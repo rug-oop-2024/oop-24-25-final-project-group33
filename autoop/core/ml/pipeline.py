@@ -114,11 +114,27 @@ Pipeline(
         self._preprocess_features()
         self._split_data()
         self._train()
-        self._evaluate()
-        return {
-            "metrics": self._metrics_results,
-            "predictions": self._predictions,
-        }
-        
 
-    
+        # Evaluate on training set
+        train_X = self._compact_vectors(self._train_X)
+        train_Y = self._train_y
+        train_predictions = self._model.predict(train_X)
+        train_metrics_results = [
+            (metric, metric.evaluate(train_predictions, train_Y)) for metric in self._metrics
+        ]
+
+        # Evaluate on test (evaluation) set
+        test_X = self._compact_vectors(self._test_X)
+        test_Y = self._test_y
+        test_predictions = self._model.predict(test_X)
+        test_metrics_results = [
+            (metric, metric.evaluate(test_predictions, test_Y)) for metric in self._metrics
+        ]
+
+        # Return both training and test metrics
+        return {
+            "train_metrics": train_metrics_results,
+            "test_metrics": test_metrics_results,
+            "train_predictions": train_predictions,
+            "test_predictions": test_predictions,
+        }
