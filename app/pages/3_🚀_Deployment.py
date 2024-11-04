@@ -1,8 +1,6 @@
 import streamlit as st
 import os
 import json
-from autoop.core.ml.artifact import Artifact
-from autoop.core.ml.pipeline import Pipeline
 
 # Set the page configuration
 st.set_page_config(page_title="Deployment", page_icon="🚀")
@@ -39,16 +37,16 @@ if pipelines:
             with open(pipeline_path, 'r') as f:
                 pipeline_data = json.load(f)
             
-            # Display pipeline details
+            # Display pipeline details with safe key access
             st.subheader("Pipeline Summary")
             st.write(f"**Name:** {selected_pipeline_name}")
-            st.write(f"**Model Type:** {pipeline_data['model_type']}")
-            st.write(f"**Input Features:** {', '.join(pipeline_data['input_features'])}")
-            st.write(f"**Target Feature:** {pipeline_data['target_feature']}")
-            st.write(f"**Split Ratio:** {pipeline_data['split']}")
+            st.write(f"**Model Type:** {pipeline_data.get('model_type', 'N/A')}")
+            st.write(f"**Input Features:** {', '.join(pipeline_data.get('input_features', []))}")
+            st.write(f"**Target Feature:** {pipeline_data.get('target_feature', 'N/A')}")
+            st.write(f"**Split Ratio:** {pipeline_data.get('split', 'N/A')}")
             st.write("**Metrics:**")
-            for metric in pipeline_data['metrics']:
-                st.write(f"- {metric}")
+            for metric, values in pipeline_data.get('metrics', {}).items():
+                st.write(f"- {metric}: Train: {values.get('train', 'N/A')}, Test: {values.get('test', 'N/A')}")
             
             # Add buttons for further actions (e.g., deploy, delete)
             if st.button("Deploy Pipeline"):
