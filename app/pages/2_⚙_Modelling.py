@@ -23,6 +23,7 @@ from sklearn.metrics import (
     mean_absolute_error,
     r2_score,
 )
+import pickle
 
 # Set page configuration
 st.set_page_config(page_title="Modelling", page_icon="📈")
@@ -161,7 +162,7 @@ if datasets:
                 st.write(f"{metric_name} (Test): {test_metric}")
                 results[metric_name] = {"train": train_metric, "test": test_metric}
 
-            # Save the pipeline
+            # Save the pipeline metadata
             pipeline_data = {
                 "pipeline_name": pipeline_name,
                 "pipeline_version": pipeline_version,
@@ -176,6 +177,11 @@ if datasets:
             
             with open(pipeline_path, 'w') as f:
                 json.dump(pipeline_data, f, indent=4)
+
+            # Save the trained model as a .pkl file
+            model_file_path = os.path.join(PIPELINES_DIR, f"{pipeline_name}_{pipeline_version}_model.pkl")
+            with open(model_file_path, 'wb') as model_file:
+                pickle.dump(model, model_file)
 
             st.success(f"Pipeline '{pipeline_name}' (version {pipeline_version}) has been saved successfully.")
 else:

@@ -1,9 +1,30 @@
 import streamlit as st
 import os
 import json
+import pandas as pd
+import pickle
 
 # Set the page configuration
 st.set_page_config(page_title="Deployment", page_icon="🚀")
+
+# Custom CSS for enhanced styling
+st.markdown("""
+    <style>
+    .stFileUploader { font-size: 1rem; }
+    .stDataFrame { margin-top: 1rem; }
+    .prediction-box {
+        font-size: 1.1rem;
+        color: #4CAF50;
+        font-weight: bold;
+        padding: 0.5em;
+        border: 1px solid #4CAF50;
+        border-radius: 0.5em;
+        background-color: #e8f5e9;
+        margin-top: 1em;
+    }
+    .header { font-size: 1.5rem; font-weight: bold; color: #333333; }
+    </style>
+""", unsafe_allow_html=True)
 
 # Title for the deployment page
 st.write("# 🚀 Deployment")
@@ -39,23 +60,51 @@ if pipelines:
             
             # Display pipeline details with safe key access
             st.subheader("Pipeline Summary")
-            st.write(f"**Name:** {selected_pipeline_name}")
-            st.write(f"**Model Type:** {pipeline_data.get('model_type', 'N/A')}")
-            st.write(f"**Input Features:** {', '.join(pipeline_data.get('input_features', []))}")
-            st.write(f"**Target Feature:** {pipeline_data.get('target_feature', 'N/A')}")
-            st.write(f"**Split Ratio:** {pipeline_data.get('split', 'N/A')}")
+            st.markdown(f"<div class='header'>Pipeline: {selected_pipeline_name}</div>", unsafe_allow_html=True)
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                st.write(f"**Model Type:** {pipeline_data.get('model_type', 'N/A')}")
+                st.write(f"**Target Feature:** {pipeline_data.get('target_feature', 'N/A')}")
+                st.write(f"**Split Ratio:** {pipeline_data.get('split', 'N/A')}")
+            with col2:
+                st.write(f"**Model Name:** {pipeline_data.get('model_name', 'N/A')}")
+                st.write(f"**Input Features:** {', '.join(pipeline_data.get('input_features', []))}")
+                
             st.write("**Metrics:**")
             for metric, values in pipeline_data.get('metrics', {}).items():
                 st.write(f"- {metric}: Train: {values.get('train', 'N/A')}, Test: {values.get('test', 'N/A')}")
-            
-            # Add buttons for further actions (e.g., deploy, delete)
-            if st.button("Deploy Pipeline"):
-                st.success(f"Pipeline '{selected_pipeline_name}' has been deployed.")
-            
-            if st.button("Delete Pipeline"):
-                os.remove(pipeline_path)
-                st.success(f"Pipeline '{selected_pipeline_name}' has been deleted.")
-                st.experimental_rerun()  # Refresh the page to update the list of pipelines
+
+            # Model file path
+            model_file_path = os.path.join(PIPELINES_DIR, f"{selected_pipeline_name}_model.pkl")
+
+            # Load the model
+            if os.path.exists(model_file_path):
+                with open(model_file_path, 'rb') as model_file:
+                    model = pickle.load(model_file)
+                
+                # Section: Upload CSV for Predictions
+                st.subheader("Upload CSV for Predictions")
+                uploaded_file = st.file_uploader("Choose a CSV file for predictions", type=["csv"])
+
+                if uploaded_file is not None:
+                    input_data = pd.read_csv(uploaded_file)
+                    st.write("Preview of uploaded data:")
+                    st.dataframe(input_data.head())
+
+                    # Check if the uploaded data contains the required input features
+                    missing_features = [feature for feature in pipeline_data.get('input_features', []) if feature not in input_data.columns]
+                    if missing_features:
+                        st.error(f"The uploaded CSV is missing the following required features: {', '.join(missing_features)}")
+                    else:
+                        # Perform predictions
+                        predictions = model.predict(input_data[pipeline_data['input_features']])
+                        
+                        # Display predictions in a styled box
+                        st.markdown("<div class='prediction-box'>Prediction Results:</div>", unsafe_allow_html=True)
+                        st.dataframe(predictions, width=700)
+            else:
+                st.error(f"Model file not found for pipeline '{selected_pipeline_name}'.")
 
         except Exception as e:
             st.error(f"Error loading pipeline '{selected_pipeline_name}': {e}")
