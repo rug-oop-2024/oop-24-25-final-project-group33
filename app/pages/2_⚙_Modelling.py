@@ -193,7 +193,7 @@ if datasets:
                 st.write("**Training Metrics:**")
                 for metric_func in selected_metric_functions:
                     try:
-                        if task_type == 'classification':
+                        if task_type == 'classification' and metric_func in [precision_score, recall_score, f1_score]:
                             # Use 'macro' or 'weighted' average for non-binary classification
                             metric_value = metric_func(y_train, predictions_train, average='macro')
                         else:
@@ -207,7 +207,7 @@ if datasets:
                 st.write("**Testing Metrics:**")
                 for metric_func in selected_metric_functions:
                     try:
-                        if task_type == 'classification':
+                        if task_type == 'classification' and metric_func in [precision_score, recall_score, f1_score]:
                             # Use 'macro' or 'weighted' average for non-binary classification
                             metric_value = metric_func(y_test, predictions_test, average='macro')
                         else:
