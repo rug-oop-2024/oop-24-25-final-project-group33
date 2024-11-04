@@ -2,7 +2,9 @@ import streamlit as st
 import pandas as pd
 import os
 import json
+import time  # Added to simulate progress
 from typing import List
+from sklearn.model_selection import train_test_split
 
 from app.core.system import AutoMLSystem
 from autoop.core.ml.dataset import Dataset
@@ -157,16 +159,29 @@ if datasets:
 
             # Button to run the pipeline
             if st.button("Run Pipeline"):
-                # Split the dataset into train and test sets
-                from sklearn.model_selection import train_test_split
+                st.write("Training the model...")
 
+                # Create a progress bar
+                progress_bar = st.progress(0)
+                status_text = st.empty()
+
+                # Split the dataset into train and test sets
                 X = df[input_features]
                 y = df[target_feature]
                 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=(1 - split_ratio), random_state=42)
 
                 # Train the model
                 model = selected_model_class()
+
+                # Simulating training progress
+                for i in range(1, 101):
+                    time.sleep(0.05)  # Simulate training time
+                    progress_bar.progress(i / 100)
+                    status_text.text(f"Training Progress: {i}%")
+
+                # Train the actual model
                 model.fit(X_train, y_train)
+                status_text.text("Training Complete!")
 
                 # Make predictions and evaluate
                 predictions_train = model.predict(X_train)
@@ -177,16 +192,30 @@ if datasets:
                 # Training metrics
                 st.write("**Training Metrics:**")
                 for metric_func in selected_metric_functions:
-                    metric_name = metric_func.__name__.replace('_', ' ').title()
-                    metric_value = metric_func(y_train, predictions_train)
-                    st.write(f"{metric_name}: {metric_value}")
+                    try:
+                        if task_type == 'classification':
+                            # Use 'macro' or 'weighted' average for non-binary classification
+                            metric_value = metric_func(y_train, predictions_train, average='macro')
+                        else:
+                            metric_value = metric_func(y_train, predictions_train)
+                        metric_name = metric_func.__name__.replace('_', ' ').title()
+                        st.write(f"{metric_name}: {metric_value}")
+                    except Exception as e:
+                        st.error(f"Error calculating metric {metric_func.__name__}: {e}")
 
                 # Testing metrics
                 st.write("**Testing Metrics:**")
                 for metric_func in selected_metric_functions:
-                    metric_name = metric_func.__name__.replace('_', ' ').title()
-                    metric_value = metric_func(y_test, predictions_test)
-                    st.write(f"{metric_name}: {metric_value}")
+                    try:
+                        if task_type == 'classification':
+                            # Use 'macro' or 'weighted' average for non-binary classification
+                            metric_value = metric_func(y_test, predictions_test, average='macro')
+                        else:
+                            metric_value = metric_func(y_test, predictions_test)
+                        metric_name = metric_func.__name__.replace('_', ' ').title()
+                        st.write(f"{metric_name}: {metric_value}")
+                    except Exception as e:
+                        st.error(f"Error calculating metric {metric_func.__name__}: {e}")
 
 else:
     st.write("No datasets available. Please upload a dataset to start modelling.")
