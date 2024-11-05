@@ -27,13 +27,15 @@ def load_registry() -> list:
 
 
 # Function to save the registry
-def save_registry(registry):
+def save_registry(registry: list) -> None:
+    """ Save the registry file """
     with open(REGISTRY_FILE, 'w') as f:
         json.dump(registry, f, indent=4)
 
 
 # Function to get dataset files from the registry
-def get_dataset_files():
+def get_dataset_files() -> list:
+    """ Get the list of dataset files from the registry """
     registry = load_registry()
     dataset_files = [e['name'] for e in registry if e['type'] == 'dataset']
     return dataset_files
@@ -45,7 +47,8 @@ if 'dataset_files' not in st.session_state:
 
 
 # Function to refresh dataset list
-def refresh_datasets():
+def refresh_datasets() -> None:
+    """ Refresh the list of datasets """
     st.session_state['dataset_files'] = get_dataset_files()
 
 
@@ -88,9 +91,10 @@ if st.session_state['dataset_files']:
             refresh_datasets()
 
     # Function to delete dataset
-    def delete_dataset():
-        dataset_path = os.path.join(OBJECTS_DIR, f"{selected_dataset_name}\
-                                    .csv")
+    def delete_dataset() -> None:
+        """ Delete the selected dataset """
+        dataset_path = os.path.join(
+            OBJECTS_DIR, f"{selected_dataset_name}.csv")
         if os.path.exists(dataset_path):
             os.remove(dataset_path)
             st.success(f"Deleted dataset: {selected_dataset_name}")
