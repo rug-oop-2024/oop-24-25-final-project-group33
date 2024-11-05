@@ -103,8 +103,8 @@ if st.session_state['dataset_files']:
             registry = [
                 e for e in registry
                 if not (
-                    e['type'] == 'dataset'
-                    and e['name'] == selected_dataset_name
+                    e['type'] == 'dataset' and e
+                    ['name'] == selected_dataset_name
                 )
             ]
             save_registry(registry)
