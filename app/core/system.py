@@ -6,13 +6,16 @@ from typing import List
 
 
 class ArtifactRegistry():
+    """A class representing a registry of artifacts."""
     def __init__(self,
                  database: Database,
-                 storage: Storage):
+                 storage: Storage) -> None:
+        """Initialize the artifact registry."""
         self._database = database
         self._storage = storage
 
-    def register(self, artifact: Artifact):
+    def register(self, artifact: Artifact) -> None:
+        """Register an artifact in the registry."""
         # save the artifact in the storage
         self._storage.save(artifact.data, artifact.asset_path)
         # save the metadata in the database
@@ -27,6 +30,7 @@ class ArtifactRegistry():
         self._database.set("artifacts", artifact.id, entry)
 
     def list(self, type: str = None) -> List[Artifact]:
+        """List all artifacts in the registry."""
         entries = self._database.list("artifacts")
         artifacts = []
         for id, data in entries:
@@ -45,6 +49,7 @@ class ArtifactRegistry():
         return artifacts
 
     def get(self, artifact_id: str) -> Artifact:
+        """Get an artifact from the registry."""
         data = self._database.get("artifacts", artifact_id)
         return Artifact(
             name=data["name"],
@@ -56,22 +61,26 @@ class ArtifactRegistry():
             type=data["type"],
         )
 
-    def delete(self, artifact_id: str):
+    def delete(self, artifact_id: str) -> None:
+        """Delete an artifact from the registry."""
         data = self._database.get("artifacts", artifact_id)
         self._storage.delete(data["asset_path"])
         self._database.delete("artifacts", artifact_id)
 
 
 class AutoMLSystem:
+    """A class representing an AutoML system."""
     _instance = None
 
-    def __init__(self, storage: LocalStorage, database: Database):
+    def __init__(self, storage: LocalStorage, database: Database) -> None:
+        """Initialize the AutoML system."""
         self._storage = storage
         self._database = database
         self._registry = ArtifactRegistry(database, storage)
 
     @staticmethod
-    def get_instance():
+    def get_instance() -> "AutoMLSystem":
+        """Get the singleton instance of the AutoML system."""
         if AutoMLSystem._instance is None:
             AutoMLSystem._instance = AutoMLSystem(
                 LocalStorage("./assets/objects"),
@@ -83,5 +92,6 @@ class AutoMLSystem:
         return AutoMLSystem._instance
 
     @property
-    def registry(self):
+    def registry(self) -> ArtifactRegistry:
+        """Get the artifact registry."""
         return self._registry

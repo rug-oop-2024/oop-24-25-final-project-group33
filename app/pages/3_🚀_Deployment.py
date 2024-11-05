@@ -80,7 +80,8 @@ if 'pipelines' not in st.session_state:
 
 
 # Function to refresh pipelines list
-def refresh_pipelines():
+def refresh_pipelines() -> None:
+    """ Refresh the list of saved pipelines """
     st.session_state['pipelines'] = get_saved_pipelines()
 
 

@@ -165,7 +165,9 @@ if datasets:
         pipeline_version = st.text_input("Pipeline Version")
 
         # Function to preprocess data and handle categorical features
-        def preprocess_data(df, input_features, target_feature):
+        def preprocess_data(df,
+                            input_features, target_feature) -> pd.DataFrame:
+            """Preprocess the data before splitting and training."""
             # Select only the input and target columns
             data = df[input_features + [target_feature]]
 
