@@ -10,7 +10,7 @@ class NotFoundError(Exception):
 
 
 class Storage(ABC):
-
+    """ A class representing a storage system. """
     @abstractmethod
     def save(self, data: bytes, path: str):
         """

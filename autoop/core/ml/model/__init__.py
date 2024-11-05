@@ -1,4 +1,3 @@
-# autoop/core/ml/model/__init__.py
 from autoop.core.ml.model.model import Model
 from autoop.core.ml.model.classification import (
     LogisticRegressionModel,

@@ -4,7 +4,7 @@ import io
 
 
 class Dataset(Artifact):
-
+    """A class representing a dataset artifact."""
     def __init__(self, *args, **kwargs):
         """ Initialize the dataset. """
         super().__init__(type="dataset", *args, **kwargs)

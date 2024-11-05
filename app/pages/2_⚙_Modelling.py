@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import json
 import time
+from sklearn.preprocessing import StandardScaler
 from typing import List
 from sklearn.model_selection import train_test_split
 from autoop.core.ml.feature import Feature
@@ -67,15 +68,19 @@ if datasets:
 
         # Check for missing values
         if df.isnull().values.any():
-            st.error("Dataset contains missing values. "
-                     "Please provide a dataset with no NaN or missing values.")
+            st.error(
+                "Dataset contains missing values. "
+                "Please provide a dataset with no NaN or missing values."
+            )
             st.stop()
 
         # Check for categorical and numerical features only
         allowed_dtypes = ['int64', 'float64', 'object']
         if not all(dtype in allowed_dtypes for dtype in df.dtypes):
-            st.error("Dataset contains unsupported data types. "
-                     "Only categorical and numerical features are allowed.")
+            st.error(
+                "Dataset contains unsupported data types. "
+                "Only categorical and numerical features are allowed."
+            )
             st.stop()
 
         st.write("Preview of selected dataset:")
@@ -96,36 +101,38 @@ if datasets:
         input_features = st.multiselect("Select input features", feature_names)
         target_feature = st.selectbox("Select target feature", feature_names)
 
-        # Manual feature selection:
-        # Check that the user selected features manually
+        # Manual feature selection
         if not input_features or not target_feature:
             st.error("Please select input and target features manually.")
             st.stop()
 
+        if target_feature in input_features:
+            st.error("Target feature cannot be one of the input features. Please select different features.")
+            st.stop()
+
         # Determine task type based on target feature type
-        task_type = 'classification' if df[
-            target_feature
-        ].dtype == 'object' else 'regression'
+        # Determine task type based on target feature type
+        task_type = 'classification' if df[target_feature].dtype == 'object' else 'regression'
         st.write(f"Detected task type: **{task_type.capitalize()}**")
 
-        # Model selection
-        st.subheader("Select Model")
-        model_options = {
-            'classification': {
+        # Dynamically set model options based on task type
+        if task_type == 'classification':
+            model_options = {
                 'Logistic Regression': LogisticRegression,
                 'Decision Tree Classifier': DecisionTreeClassifier,
                 'Random Forest Classifier': RandomForestClassifier
-            },
-            'regression': {
+            }
+        else:  # Regression models
+            model_options = {
                 'Linear Regression': LinearRegression,
                 'Ridge Regression': Ridge,
                 'Decision Tree Regressor': DecisionTreeRegressor
             }
-        }
+
+        # Allow user to select from the relevant model options
         selected_model_name = st.selectbox(
-            "Select a model", list(model_options[task_type].keys())
-        )
-        selected_model_class = model_options[task_type][selected_model_name]
+            "Select a model", list(model_options.keys()))
+        selected_model_class = model_options[selected_model_name]
 
         # Dataset split
         st.subheader("Select Dataset Split")
@@ -165,26 +172,49 @@ if datasets:
         pipeline_version = st.text_input("Pipeline Version")
 
         # Function to preprocess data and handle categorical features
-        def preprocess_data(df,
-                            input_features, target_feature) -> pd.DataFrame:
+        def preprocess_data(df, input_features, target_feature, task_type):
             """Preprocess the data before splitting and training."""
-            # Select only the input and target columns
-            data = df[input_features + [target_feature]]
+            # Ensure df is a DataFrame
+            if not isinstance(df, pd.DataFrame):
+                raise TypeError("The provided dataset is not a DataFrame.")
+            
+            # Select only the specified input and target columns, making a copy to avoid modification issues
+            selected_columns = input_features + [target_feature]
+            
+            # Ensure selected columns are in the DataFrame
+            missing_columns = [col for col in selected_columns if col not in df.columns]
+            if missing_columns:
+                raise KeyError(f"The following columns are missing in the dataset: {missing_columns}")
+            
+            data = df[selected_columns].copy()
 
-            # Convert categorical features to numeric using one-hot encoding
-            data = pd.get_dummies(data, columns=[
-                col for col in input_features if df[col].dtype == 'object'
-            ])
+            # Confirm target feature is in data columns after selection
+            if target_feature not in data.columns:
+                raise KeyError(f"The target feature '{target_feature}' is missing from the selected data columns.")
 
-            # Ensure target feature is numeric
-            if data[target_feature].dtype == 'object':
-                data[target_feature] = pd.factorize(data[target_feature])[0]
+            # One-hot encode categorical features in input_features
+            for col in input_features:
+                if col in data.columns and pd.api.types.is_object_dtype(data[col]):
+                    # Apply one-hot encoding with individual prefixes for each categorical column
+                    data = pd.get_dummies(data, columns=[col], prefix=col)
+
+            # Check if target feature is categorical for classification tasks
+            if task_type == 'classification' and pd.api.types.is_object_dtype(data[target_feature]):
+                # Encode target feature as numeric labels
+                data[target_feature] = pd.factorize(data[target_feature])[0]  
+
+            # Debugging statements to ensure the target column exists after processing
+            print("Columns after preprocessing:", data.columns)
+            print(f"Data types after preprocessing:\n{data.dtypes}")
+            print(f"Target feature preview: {data[target_feature].head()}")
+            
             return data
 
         # Preprocess the data before splitting and training
-        data = preprocess_data(df, input_features, target_feature)
+        data = preprocess_data(df, input_features, target_feature, task_type)
         X = data.drop(columns=[target_feature])
         y = data[target_feature]
+
         # Run pipeline button
         if st.button("Run and Save") and pipeline_name and pipeline_version:
             st.write("Training the model...")
@@ -206,17 +236,29 @@ if datasets:
             st.write("Training Complete!")
 
             # Evaluate and display metrics
+            # Evaluate and display metrics
             st.write("**Pipeline Results:**")
             results = {}
             for metric_func in selected_metric_functions:
-                train_metric = metric_func(y_train, model.predict(X_train))
-                test_metric = metric_func(y_test, model.predict(X_test))
-                metric_name = metric_func.__name__.replace("_", " ").title()
-                st.write(f"{metric_name} (Train): {train_metric}")
-                st.write(f"{metric_name} (Test): {test_metric}")
-                results[metric_name] = {
-                    "train": train_metric, "test": test_metric
-                }
+                try:
+                    # Use average='weighted' for multiclass classification if necessary
+                    if task_type == 'classification' and metric_func in [precision_score, recall_score, f1_score]:
+                        # Detect multiclass setting and apply 'weighted' average for relevant metrics
+                        train_metric = metric_func(y_train, model.predict(X_train), average='weighted')
+                        test_metric = metric_func(y_test, model.predict(X_test), average='weighted')
+                    else:
+                        train_metric = metric_func(y_train, model.predict(X_train))
+                        test_metric = metric_func(y_test, model.predict(X_test))
+
+                    metric_name = metric_func.__name__.replace("_", " ").title()
+                    st.write(f"{metric_name} (Train): {train_metric}")
+                    st.write(f"{metric_name} (Test): {test_metric}")
+                    results[metric_name] = {
+                        "train": train_metric, "test": test_metric
+                    }
+                except ValueError as e:
+                    st.warning(f"Could not calculate {metric_func.__name__} due to: {e}")
+
 
             # Save the pipeline metadata
             pipeline_data = {
@@ -281,9 +323,13 @@ if datasets:
                     f"Prediction vs Actual for {selected_model_name}"
                 )
                 ax[0].legend(loc="upper left")
+
                 # Add a text box with metrics to the main scatter plot
-                textstr = f"Mean Absolute Error: {mae:.2f}\n\
-Mean Squared Error: {mse:.2f}\nR² Score: {r2:.2f}"
+                textstr = (
+                    f"Mean Absolute Error: {mae:.2f}\n"
+                    f"Mean Squared Error: {mse:.2f}\n"
+                    f"R² Score: {r2:.2f}"
+                )
                 props = dict(boxstyle='round', facecolor='white', alpha=0.7)
                 ax[0].text(
                     0.95, 0.05, textstr, transform=ax[0].transAxes,
@@ -293,7 +339,8 @@ Mean Squared Error: {mse:.2f}\nR² Score: {r2:.2f}"
 
                 # Plot 2: Actual Distribution
                 sns.histplot(
-                    y_test, kde=True, color="blue", ax=ax[1], label="Actual")
+                    y_test, kde=True, color="blue", ax=ax[1], label="Actual"
+                )
                 ax[1].set_title("Actual Values Distribution")
                 ax[1].set_xlabel("Actual Values")
                 ax[1].legend()
@@ -301,7 +348,8 @@ Mean Squared Error: {mse:.2f}\nR² Score: {r2:.2f}"
                 # Plot 3: Predicted Distribution
                 sns.histplot(
                     y_pred, kde=True, color="green",
-                    ax=ax[2], label="Predicted")
+                    ax=ax[2], label="Predicted"
+                )
                 ax[2].set_title("Predicted Values Distribution")
                 ax[2].set_xlabel("Predicted Values")
                 ax[2].legend()
@@ -309,6 +357,9 @@ Mean Squared Error: {mse:.2f}\nR² Score: {r2:.2f}"
                 # Display the figure
                 st.pyplot(fig)
 
+
 else:
-    st.write("No datasets available.\
-Please upload a dataset to start modeling.")
+    st.write(
+        "No datasets available. Please upload a dataset to start modeling."
+    )
+
