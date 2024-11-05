@@ -11,7 +11,7 @@ import numpy as np
 
 
 class Pipeline:
-    """A class representing a machine learning pipeline"""
+    """A class representing a machine learning pipeline."""
     def __init__(self,
                  metrics: List[Metric],
                  dataset: Dataset,
