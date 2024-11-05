@@ -186,11 +186,7 @@ if datasets:
         X = data.drop(columns=[target_feature])
         y = data[target_feature]
         # Run pipeline button
-        if (
-            st.button("Run and Save Pipeline")
-            and pipeline_name
-            and pipeline_version
-        ):
+        if st.button("Run and Save") and pipeline_name and pipeline_version:
             st.write("Training the model...")
             progress_bar = st.progress(0)
             status_text = st.empty()
