@@ -185,7 +185,6 @@ if datasets:
         data = preprocess_data(df, input_features, target_feature)
         X = data.drop(columns=[target_feature])
         y = data[target_feature]
-
         # Run pipeline button
         if (
             st.button("Run and Save Pipeline")
@@ -279,13 +278,13 @@ if datasets:
                     [y_test.min(), y_test.max()],
                     [y_test.min(), y_test.max()],
                     'r--', label="Perfect Fit Line"
-                    )
+                )
                 ax[0].set_xlabel("Actual Values")
                 ax[0].set_ylabel("Predicted Values")
-                ax[0].set_title(f"Prediction vs Actual for\
-{selected_model_name}")
+                ax[0].set_title(
+                    f"Prediction vs Actual for {selected_model_name}"
+                )
                 ax[0].legend(loc="upper left")
-
                 # Add a text box with metrics to the main scatter plot
                 textstr = f"Mean Absolute Error: {mae:.2f}\n\
 Mean Squared Error: {mse:.2f}\nR² Score: {r2:.2f}"

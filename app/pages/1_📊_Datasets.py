@@ -106,7 +106,6 @@ if st.session_state['dataset_files']:
                     e['type'] == 'dataset'
                     and e['name'] == selected_dataset_name)
             ]
-
             save_registry(registry)
             # Refresh the dataset list
             refresh_datasets()
@@ -150,7 +149,8 @@ if uploaded_file:
     )
 
     # Function to save the dataset
-    def save_dataset():
+    def save_dataset() -> None:
+        """ Save the uploaded dataset """
         if dataset_name:
             dataset_path = os.path.join(OBJECTS_DIR, dataset_name + '.csv')
             if os.path.exists(dataset_path):
