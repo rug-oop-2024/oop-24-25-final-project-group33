@@ -30,7 +30,7 @@ class TestPipeline(unittest.TestCase):
             input_features=list(
                 filter(lambda x: x.name != "age", self.features)
                 ),
-            target_feature=Feature(name="age", type="numerical"),
+            target_f=Feature(name="age", type="numerical"),
             metrics=[MeanSquaredError()],
             split=0.8
         )

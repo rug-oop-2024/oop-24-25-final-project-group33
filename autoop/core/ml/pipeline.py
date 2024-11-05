@@ -17,26 +17,24 @@ class Pipeline:
                  dataset: Dataset,
                  model: Model,
                  input_features: List[Feature],
-                 target_feature: Feature,
+                 target_f: Feature,
                  split=0.8) -> None:
         """Initialize the pipeline."""
         self._dataset = dataset
         self._model = model
         self._input_features = input_features
-        self._target_feature = target_feature
+        self._target_feature = target_f
         self._metrics = metrics
         self._artifacts = {}
         self._split = split
         if (
-            target_feature.type == "categorical" and
-            model.type != "classification"
+            target_f.type == "categorical" and model.type != "classification"
         ):
             raise ValueError(
                 "Model type must be classification \
 for categorical target feature")
         if (
-            target_feature.type == "continuous" and
-            model.type != "regression"
+            target_f.type == "continuous" and model.type != "regression"
         ):
             raise ValueError(
                 "Model type must be regression \
