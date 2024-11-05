@@ -14,6 +14,7 @@ REGISTRY_FILE = os.path.join(ASSETS_DIR, 'registry.json')
 # Ensure directories exist
 os.makedirs(OBJECTS_DIR, exist_ok=True)
 
+
 # Function to load the registry
 def load_registry():
     if os.path.exists(REGISTRY_FILE):
@@ -23,24 +24,29 @@ def load_registry():
         registry = []
     return registry
 
+
 # Function to save the registry
 def save_registry(registry):
     with open(REGISTRY_FILE, 'w') as f:
         json.dump(registry, f, indent=4)
 
+
 # Function to get dataset files from the registry
 def get_dataset_files():
     registry = load_registry()
-    dataset_files = [entry['name'] for entry in registry if entry['type'] == 'dataset']
+    dataset_files = [e['name'] for e in registry if e['type'] == 'dataset']
     return dataset_files
+
 
 # Initialize session state for datasets
 if 'dataset_files' not in st.session_state:
     st.session_state['dataset_files'] = get_dataset_files()
 
+
 # Function to refresh dataset list
 def refresh_datasets():
     st.session_state['dataset_files'] = get_dataset_files()
+
 
 # Session state variable to trigger rerun
 if 'refresh' not in st.session_state:
@@ -81,13 +87,18 @@ if st.session_state['dataset_files']:
 
     # Function to delete dataset
     def delete_dataset():
-        dataset_path = os.path.join(OBJECTS_DIR, selected_dataset_name + '.csv')
+        dataset_path = os.path.join(OBJECTS_DIR, f"{selected_dataset_name}\
+                                    .csv")
         if os.path.exists(dataset_path):
             os.remove(dataset_path)
             st.success(f"Deleted dataset: {selected_dataset_name}")
             # Update the registry
             registry = load_registry()
-            registry = [entry for entry in registry if not (entry['type'] == 'dataset' and entry['name'] == selected_dataset_name)]
+            registry = [
+                e for e in registry
+                if not (e['type'] == 'dataset' and e['name'] == selected_dataset_name)
+            ]
+
             save_registry(registry)
             # Refresh the dataset list
             refresh_datasets()
