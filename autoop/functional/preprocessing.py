@@ -24,19 +24,19 @@ Each ndarray of shape (N, ...)
             encoder = OneHotEncoder()
             data = encoder.fit_transform(
                 raw[feature.name].values.reshape(-1, 1)
-                ).toarray()
+            ).toarray()
             aritfact = {
                 "type": "OneHotEncoder", "encoder": encoder.get_params()
-                }
+            }
             results.append((feature.name, data, aritfact))
         if feature.type == "numerical":
             scaler = StandardScaler()
             data = scaler.fit_transform(
                 raw[feature.name].values.reshape(-1, 1)
-                )
+            )
             artifact = {
                 "type": "StandardScaler", "scaler": scaler.get_params()
-                }
+            }
             results.append((feature.name, data, artifact))
     # Sort for consistency
     results = list(sorted(results, key=lambda x: x[0]))

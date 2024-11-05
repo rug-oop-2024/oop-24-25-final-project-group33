@@ -84,7 +84,7 @@ and data for each item in the collection
                 self._storage.save(
                     json.dumps(item).encode(),
                     f"{collection}{os.sep}{id}"
-                    )
+                )
 
         # for things that were deleted, we need to remove them from the storage
         keys = self._storage.list("")
