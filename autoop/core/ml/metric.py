@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Any
 import numpy as np
-from sklearn.metrics import accuracy_score
 
 # List of available metrics
 METRICS = [
@@ -12,6 +11,7 @@ METRICS = [
     "precision",
     "recall",
 ]
+
 
 def get_metric(name: str):
     """Factory function to get a metric by name."""
@@ -26,17 +26,20 @@ def get_metric(name: str):
     if name in metrics:
         return metrics[name]
     else:
-        raise ValueError(f"Metric '{name}' is not recognized. Available metrics are: {list(metrics.keys())}")
+        raise ValueError(f"Metric '{name}' is not recognized. \
+Available metrics are: {list(metrics.keys())}")
+
 
 class Metric(ABC):
     """Base class for all metrics."""
-    
+
     @abstractmethod
     def __call__(self, y_true: Any, y_pred: Any) -> float:
         pass
-    
+
     def evaluate(self, y_true: Any, y_pred: Any) -> float:
         return self.__call__(y_true, y_pred)
+
 
 # Regression Metrics
 class MeanSquaredError(Metric):
@@ -44,10 +47,12 @@ class MeanSquaredError(Metric):
     def __call__(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         return np.mean((y_true - y_pred) ** 2)
 
+
 class MeanAbsoluteError(Metric):
     """Mean Absolute Error metric."""
     def __call__(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         return np.mean(np.abs(y_true - y_pred))
+
 
 class RSquared(Metric):
     """R-squared metric (coefficient of determination)."""
@@ -56,11 +61,13 @@ class RSquared(Metric):
         ss_tot = np.sum((y_true - np.mean(y_true)) ** 2)
         return 1 - (ss_res / ss_tot)
 
+
 # Classification Metrics
 class Accuracy(Metric):
     """Accuracy metric."""
     def __call__(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         return np.sum(y_true == y_pred) / len(y_true)
+
 
 class Precision(Metric):
     """Precision metric for multi-class classification."""
@@ -73,6 +80,7 @@ class Precision(Metric):
             precision_sum += tp / (tp + fp + 1e-10)  # Avoid division by zero
         return precision_sum / len(classes)
 
+
 class Recall(Metric):
     """Recall metric for multi-class classification."""
     def __call__(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
@@ -83,4 +91,3 @@ class Recall(Metric):
             fn = np.sum((y_pred != cls) & (y_true == cls))
             recall_sum += tp / (tp + fn + 1e-10)  # Avoid division by zero
         return recall_sum / len(classes)
-

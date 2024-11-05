@@ -5,6 +5,7 @@ from copy import deepcopy
 from typing import Dict, Any, Literal
 from autoop.core.ml.artifact import Artifact
 
+
 class Model(ABC):
     def __init__(self, model_type: Literal["classification", "regression"]):
         self.model_type = model_type

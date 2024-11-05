@@ -5,6 +5,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 
+
 class LogisticRegressionModel(Model):
     def __init__(self):
         super().__init__(model_type="classification")
@@ -17,6 +18,7 @@ class LogisticRegressionModel(Model):
     def predict(self, X: np.ndarray) -> np.ndarray:
         return self.model.predict(X)
 
+
 class DecisionTreeClassifierModel(Model):
     def __init__(self):
         super().__init__(model_type="classification")
@@ -28,6 +30,7 @@ class DecisionTreeClassifierModel(Model):
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         return self.model.predict(X)
+
 
 class RandomForestClassifierModel(Model):
     def __init__(self):

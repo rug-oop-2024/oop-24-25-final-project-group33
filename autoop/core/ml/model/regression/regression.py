@@ -4,6 +4,7 @@ import numpy as np
 from sklearn.linear_model import LinearRegression, Ridge
 from sklearn.tree import DecisionTreeRegressor
 
+
 class LinearRegressionModel(Model):
     def __init__(self):
         super().__init__(model_type="regression")
@@ -16,6 +17,7 @@ class LinearRegressionModel(Model):
     def predict(self, X: np.ndarray) -> np.ndarray:
         return self.model.predict(X)
 
+
 class RidgeRegressionModel(Model):
     def __init__(self):
         super().__init__(model_type="regression")
@@ -27,6 +29,7 @@ class RidgeRegressionModel(Model):
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         return self.model.predict(X)
+
 
 class DecisionTreeRegressorModel(Model):
     def __init__(self):

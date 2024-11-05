@@ -23,6 +23,7 @@ CLASSIFICATION_MODELS = [
     "Random Forest Classifier",
 ]
 
+
 def get_model(model_name: str) -> Model:
     """Factory function to get a model by name."""
     if model_name == "Logistic Regression":

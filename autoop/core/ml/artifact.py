@@ -4,14 +4,22 @@ import base64
 from typing import List, Dict, Any
 import hashlib
 
+
 class Artifact(BaseModel):
     name: Optional[str] = Field(None, description="The name of the artifact.")
     type: Optional[str] = Field(None, description="The type of the artifact.")
-    data: Optional[bytes] = Field(None, description="The binary data of the artifact.")
-    asset_path: Optional[str] = Field(None, description="The path to the asset.")
-    version: Optional[str] = Field(None, description="The version of the artifact.")
-    tags: Optional[List[str]] = Field(default_factory=list, description="List of tags associated with the artifact.")
-    metadata: Optional[Dict[str, Any]] = Field(default_factory=dict, description="Additional metadata for the artifact.")  # Added metadata attribute
+    data: Optional[bytes] = Field(
+        None, description="The binary data of the artifact.")
+    asset_path: Optional[str] = Field(
+        None, description="The path to the asset.")
+    version: Optional[str] = Field(
+        None, description="The version of the artifact.")
+    tags: Optional[List[str]] = Field(
+        default_factory=list,
+        description="List of tags associated with the artifact.")
+    metadata: Optional[Dict[str, Any]] = Field(
+        default_factory=dict,
+        description="Additional metadata for the artifact.")
 
     @property
     def id(self) -> str:
@@ -20,7 +28,7 @@ class Artifact(BaseModel):
         """
         unique_string = f"{self.name}:{self.version}"
         return hashlib.md5(unique_string.encode()).hexdigest()
-    
+
     def encode_data(self, data: str) -> bytes:
         """
         Encodes a string as base64 bytes and stores it in `self.data`.
