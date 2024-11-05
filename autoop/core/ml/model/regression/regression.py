@@ -6,39 +6,51 @@ from sklearn.tree import DecisionTreeRegressor
 
 
 class LinearRegressionModel(Model):
-    def __init__(self):
+    """Linear Regression model."""
+    def __init__(self) -> None:
+        """Initialize the model."""
         super().__init__(model_type="regression")
         self.model = LinearRegression()
 
-    def fit(self, X: np.ndarray, y: np.ndarray):
+    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
+        """Fit the model to the training data."""
         self.model.fit(X, y)
         self.parameters = self.model.get_params()
 
     def predict(self, X: np.ndarray) -> np.ndarray:
+        """Predict the target variable for the input data."""
         return self.model.predict(X)
 
 
 class RidgeRegressionModel(Model):
-    def __init__(self):
+    """Ridge Regression model."""
+    def __init__(self) -> None:
+        """Initialize the model."""
         super().__init__(model_type="regression")
         self.model = Ridge()
 
-    def fit(self, X: np.ndarray, y: np.ndarray):
+    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
+        """Fit the model to the training data."""
         self.model.fit(X, y)
         self.parameters = self.model.get_params()
 
     def predict(self, X: np.ndarray) -> np.ndarray:
+        """Predict the target variable for the input data."""
         return self.model.predict(X)
 
 
 class DecisionTreeRegressorModel(Model):
-    def __init__(self):
+    """Decision Tree Regressor model."""
+    def __init__(self) -> None:
+        """Initialize the model."""
         super().__init__(model_type="regression")
         self.model = DecisionTreeRegressor()
 
-    def fit(self, X: np.ndarray, y: np.ndarray):
+    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
+        """Fit the model to the training data."""
         self.model.fit(X, y)
         self.parameters = self.model.get_params()
 
     def predict(self, X: np.ndarray) -> np.ndarray:
+        """Predict the target variable for the input data."""
         return self.model.predict(X)

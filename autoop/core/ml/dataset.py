@@ -6,6 +6,7 @@ import io
 class Dataset(Artifact):
 
     def __init__(self, *args, **kwargs):
+        """ Initialize the dataset. """
         super().__init__(type="dataset", *args, **kwargs)
 
     @staticmethod
@@ -15,6 +16,7 @@ class Dataset(Artifact):
         asset_path: str,
         version: str = "1.0.0"
     ):
+        """ Create a dataset from a pandas DataFrame. """
         return Dataset(
             name=name,
             asset_path=asset_path,
@@ -23,10 +25,12 @@ class Dataset(Artifact):
         )
 
     def read(self) -> pd.DataFrame:
+        """ Read the dataset as a pandas DataFrame. """
         bytes = super().read()
         csv = bytes.decode()
         return pd.read_csv(io.StringIO(csv))
 
     def save(self, data: pd.DataFrame) -> bytes:
+        """ Save the dataset to the storage. """
         bytes = data.to_csv(index=False).encode()
         return super().save(bytes)

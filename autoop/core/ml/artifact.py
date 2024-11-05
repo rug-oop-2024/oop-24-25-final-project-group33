@@ -6,6 +6,7 @@ import hashlib
 
 
 class Artifact(BaseModel):
+    """ A class representing an artifact. """
     name: Optional[str] = Field(None, description="The name of the artifact.")
     type: Optional[str] = Field(None, description="The type of the artifact.")
     data: Optional[bytes] = Field(
@@ -45,7 +46,7 @@ class Artifact(BaseModel):
             raise ValueError("No data to decode.")
         return base64.b64decode(self.data).decode()
 
-    def save(self, data: bytes):
+    def save(self, data: bytes) -> None:
         """
         Save raw bytes to `self.data`.
         """
