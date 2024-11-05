@@ -16,7 +16,8 @@ os.makedirs(OBJECTS_DIR, exist_ok=True)
 
 
 # Function to load the registry
-def load_registry():
+def load_registry() -> list:
+    """ Load the registry file """
     if os.path.exists(REGISTRY_FILE):
         with open(REGISTRY_FILE, 'r') as f:
             registry = json.load(f)
@@ -75,7 +76,8 @@ if st.session_state['dataset_files']:
 
     # Load and display the selected dataset
     if selected_dataset_name:
-        dataset_path = os.path.join(OBJECTS_DIR, selected_dataset_name + '.csv')
+        dataset_path = os.path.join(
+            OBJECTS_DIR, selected_dataset_name + '.csv')
         if os.path.exists(dataset_path):
             dataset_df = pd.read_csv(dataset_path)
             st.write(f"**Dataset Name:** {selected_dataset_name}")
@@ -96,7 +98,9 @@ if st.session_state['dataset_files']:
             registry = load_registry()
             registry = [
                 e for e in registry
-                if not (e['type'] == 'dataset' and e['name'] == selected_dataset_name)
+                if not (
+                    e['type'] == 'dataset'
+                    and e['name'] == selected_dataset_name)
             ]
 
             save_registry(registry)
@@ -146,16 +150,19 @@ if uploaded_file:
         if dataset_name:
             dataset_path = os.path.join(OBJECTS_DIR, dataset_name + '.csv')
             if os.path.exists(dataset_path):
-                st.error(f"A dataset with the name '{dataset_name}' already exists.")
+                st.error(f"A dataset with the name '{dataset_name}'\
+already exists.")
             else:
                 df.to_csv(dataset_path, index=False)
-                st.success(f"Dataset '{dataset_name}' has been saved successfully.")
+                st.success(f"Dataset '{dataset_name}'\
+has been saved successfully.")
                 # Update the registry
                 registry = load_registry()
                 new_entry = {
                     "name": dataset_name,
                     "type": "dataset",
-                    "asset_path": os.path.relpath(dataset_path, start=ASSETS_DIR)
+                    "asset_path": os.path.relpath(
+                        dataset_path, start=ASSETS_DIR)
                 }
                 registry.append(new_entry)
                 save_registry(registry)

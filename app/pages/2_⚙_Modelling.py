@@ -5,15 +5,10 @@ import json
 import time
 from typing import List
 from sklearn.model_selection import train_test_split
-from app.core.system import AutoMLSystem
-from autoop.core.ml.dataset import Dataset
 from autoop.core.ml.feature import Feature
-from autoop.core.ml.pipeline import Pipeline
-from autoop.core.ml.model import Model
-from autoop.core.ml.metric import Metric
 from sklearn.linear_model import LogisticRegression, LinearRegression, Ridge
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import (
     accuracy_score,
     precision_score,
@@ -171,7 +166,11 @@ Only categorical and numerical features are allowed.")
         pipeline_version = st.text_input("Pipeline Version")
 
         # Run pipeline button
-        if st.button("Run and Save Pipeline") and pipeline_name and pipeline_version:
+        if (
+            st.button("Run and Save Pipeline")
+            and pipeline_name
+            and pipeline_version
+        ):
             st.write("Training the model...")
             progress_bar = st.progress(0)
             status_text = st.empty()
