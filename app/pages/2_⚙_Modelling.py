@@ -3,7 +3,6 @@ import pandas as pd
 import os
 import json
 import time
-from sklearn.preprocessing import StandardScaler
 from typing import List
 from sklearn.model_selection import train_test_split
 from autoop.core.ml.feature import Feature
@@ -107,7 +106,8 @@ if datasets:
             st.stop()
 
         if target_feature in input_features:
-            st.error("Target feature cannot be one of the input features. Please select different features.")
+            st.error("Target feature cannot be one of the input features. \
+Please select different features.")
             st.stop()
 
         # Determine task type based on target feature type
@@ -177,37 +177,48 @@ if datasets:
             # Ensure df is a DataFrame
             if not isinstance(df, pd.DataFrame):
                 raise TypeError("The provided dataset is not a DataFrame.")
-            
-            # Select only the specified input and target columns, making a copy to avoid modification issues
+
+            # Select only the specified input and target columns,
+            # making a copy to avoid modification issues
             selected_columns = input_features + [target_feature]
-            
+
             # Ensure selected columns are in the DataFrame
-            missing_columns = [col for col in selected_columns if col not in df.columns]
+            missing_columns = [
+                col for col in selected_columns if col not in df.columns
+                ]
             if missing_columns:
-                raise KeyError(f"The following columns are missing in the dataset: {missing_columns}")
-            
+                raise KeyError(f"The following columns \
+are missing in the dataset: {missing_columns}")
+
             data = df[selected_columns].copy()
 
             # Confirm target feature is in data columns after selection
             if target_feature not in data.columns:
-                raise KeyError(f"The target feature '{target_feature}' is missing from the selected data columns.")
+                raise KeyError(f"The target feature \
+'{target_feature}' is missing from the selected data columns.")
 
             # One-hot encode categorical features in input_features
             for col in input_features:
-                if col in data.columns and pd.api.types.is_object_dtype(data[col]):
-                    # Apply one-hot encoding with individual prefixes for each categorical column
+                if col in data.columns and pd.api.types.is_object_dtype(
+                    data[col]
+                ):
+                    # Apply one-hot encoding with individual
+                    # prefixes for each categorical column
                     data = pd.get_dummies(data, columns=[col], prefix=col)
 
             # Check if target feature is categorical for classification tasks
-            if task_type == 'classification' and pd.api.types.is_object_dtype(data[target_feature]):
+            if task_type == 'classification' and pd.api.types.is_object_dtype(
+                data[target_feature]
+            ):
                 # Encode target feature as numeric labels
-                data[target_feature] = pd.factorize(data[target_feature])[0]  
+                data[target_feature] = pd.factorize(data[target_feature])[0]
 
-            # Debugging statements to ensure the target column exists after processing
+            # Debugging statements to ensure the target
+            # column exists after processing
             print("Columns after preprocessing:", data.columns)
             print(f"Data types after preprocessing:\n{data.dtypes}")
             print(f"Target feature preview: {data[target_feature].head()}")
-            
+
             return data
 
         # Preprocess the data before splitting and training
@@ -241,24 +252,36 @@ if datasets:
             results = {}
             for metric_func in selected_metric_functions:
                 try:
-                    # Use average='weighted' for multiclass classification if necessary
-                    if task_type == 'classification' and metric_func in [precision_score, recall_score, f1_score]:
-                        # Detect multiclass setting and apply 'weighted' average for relevant metrics
-                        train_metric = metric_func(y_train, model.predict(X_train), average='weighted')
-                        test_metric = metric_func(y_test, model.predict(X_test), average='weighted')
+                    # Use average='weighted' for multiclass
+                    # classification if necessary
+                    if task_type == 'classification' and metric_func in [
+                        precision_score, recall_score, f1_score
+                    ]:
+                        # Detect multiclass setting and apply
+                        # 'weighted' average for relevant metrics
+                        train_metric = metric_func(
+                            y_train, model.predict(X_train), average='weighted'
+                            )
+                        test_metric = metric_func(
+                            y_test, model.predict(X_test), average='weighted'
+                            )
                     else:
-                        train_metric = metric_func(y_train, model.predict(X_train))
-                        test_metric = metric_func(y_test, model.predict(X_test))
+                        train_metric = metric_func(
+                            y_train, model.predict(X_train)
+                            )
+                        test_metric = metric_func(
+                            y_test, model.predict(X_test))
 
-                    metric_name = metric_func.__name__.replace("_", " ").title()
+                    metric_name = metric_func.__name__.replace(
+                        "_", " ").title()
                     st.write(f"{metric_name} (Train): {train_metric}")
                     st.write(f"{metric_name} (Test): {test_metric}")
                     results[metric_name] = {
                         "train": train_metric, "test": test_metric
                     }
                 except ValueError as e:
-                    st.warning(f"Could not calculate {metric_func.__name__} due to: {e}")
-
+                    st.warning(f"Could not calculate \
+{metric_func.__name__} due to: {e}")
 
             # Save the pipeline metadata
             pipeline_data = {
@@ -362,4 +385,3 @@ else:
     st.write(
         "No datasets available. Please upload a dataset to start modeling."
     )
-
