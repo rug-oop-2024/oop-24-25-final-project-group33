@@ -3,3 +3,9 @@ pydantic
 pandas
 numpy
 scikit-learn
+seaborn
+matplotlib
+pickle
+base64
+hashlib
+io
