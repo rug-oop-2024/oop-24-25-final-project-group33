@@ -11,13 +11,15 @@ import numpy as np
 
 
 class Pipeline:
+    """A class representing a machine learning pipeline."""
     def __init__(self,
                  metrics: List[Metric],
                  dataset: Dataset,
                  model: Model,
                  input_features: List[Feature],
                  target_feature: Feature,
-                 split=0.8):
+                 split=0.8) -> None:
+        """Initialize the pipeline."""
         self._dataset = dataset
         self._model = model
         self._input_features = input_features
@@ -39,7 +41,8 @@ for categorical target feature")
             raise ValueError("Model type must be regression \
 for continuous target feature")
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """Return a string representation of the pipeline."""
         return f"""
 Pipeline(
     model={self._model.type},
@@ -51,7 +54,8 @@ Pipeline(
 """
 
     @property
-    def model(self):
+    def model(self) -> Model:
+        """Used to get the model used in the pipeline."""
         return self._model
 
     @property
@@ -84,10 +88,12 @@ the pipeline execution to be saved."""
 
         return artifacts
 
-    def _register_artifact(self, name: str, artifact):
+    def _register_artifact(self, name: str, artifact) -> None:
+        """Register an artifact generated during the pipeline execution."""
         self._artifacts[name] = artifact
 
-    def _preprocess_features(self):
+    def _preprocess_features(self) -> None:
+        """Preprocess the input and target features."""
         (target_feature_name, target_data, artifact) = preprocess_features(
             [self._target_feature], self._dataset
             )[0]
@@ -104,7 +110,8 @@ the pipeline execution to be saved."""
             data for (feature_name, data, artifact) in input_results
             ]
 
-    def _split_data(self):
+    def _split_data(self) -> None:
+        """Split the data into training and testing sets."""
         # Split the data into training and testing sets
         split = self._split
         self._train_X = [
@@ -121,14 +128,17 @@ the pipeline execution to be saved."""
             ]
 
     def _compact_vectors(self, vectors: List[np.array]) -> np.array:
+        """Combine the input vectors into a single matrix."""
         return np.concatenate(vectors, axis=1)
 
-    def _train(self):
+    def _train(self) -> None:
+        """Train the model on the training data."""
         X = self._compact_vectors(self._train_X)
         Y = self._train_y
         self._model.fit(X, Y)
 
-    def _evaluate(self):
+    def _evaluate(self) -> None:
+        """Evaluate the model on the test data."""
         X = self._compact_vectors(self._test_X)
         Y = self._test_y
         self._metrics_results = []
@@ -138,7 +148,8 @@ the pipeline execution to be saved."""
             self._metrics_results.append((metric, result))
         self._predictions = predictions
 
-    def execute(self):
+    def execute(self) -> dict:
+        """Execute the pipeline."""
         self._preprocess_features()
         self._split_data()
         self._train()
@@ -171,7 +182,7 @@ the pipeline execution to be saved."""
             "test_predictions": test_predictions,
         }
 
-    def save_pipeline(self, name: str, version: str):
+    def save_pipeline(self, name: str, version: str) -> Artifact:
         """Converts the pipeline into an artifact and allows it to be saved."""
         pipeline_artifact = {
             "name": name,

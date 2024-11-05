@@ -54,13 +54,15 @@ class Storage(ABC):
 
 
 class LocalStorage(Storage):
-
-    def __init__(self, base_path: str = "./assets"):
+    """ A class representing a local storage system. """
+    def __init__(self, base_path: str = "./assets") -> None:
+        """ Initialize the local storage system. """
         self._base_path = os.path.normpath(base_path)
         if not os.path.exists(self._base_path):
             os.makedirs(self._base_path)
 
-    def save(self, data: bytes, key: str):
+    def save(self, data: bytes, key: str) -> None:
+        """ Save data to a given path. """
         path = self._join_path(key)
         # Ensure parent directories are created
         os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -68,17 +70,20 @@ class LocalStorage(Storage):
             f.write(data)
 
     def load(self, key: str) -> bytes:
+        """ Load data from a given path"""
         path = self._join_path(key)
         self._assert_path_exists(path)
         with open(path, 'rb') as f:
             return f.read()
 
-    def delete(self, key: str = "/"):
+    def delete(self, key: str = "/") -> None:
+        """ Delete data at a given path. """
         path = self._join_path(key)
         self._assert_path_exists(path)
         os.remove(path)
 
     def list(self, prefix: str = "/") -> List[str]:
+        """ List all paths under a given path. """
         path = self._join_path(prefix)
         self._assert_path_exists(path)
         # Use os.path.join for compatibility across platforms
@@ -89,10 +94,12 @@ class LocalStorage(Storage):
                 ) for p in keys if os.path.isfile(p)
             ]
 
-    def _assert_path_exists(self, path: str):
+    def _assert_path_exists(self, path: str) -> None:
+        """ Assert that a path exists"""
         if not os.path.exists(path):
             raise NotFoundError(path)
 
     def _join_path(self, path: str) -> str:
+        """ Join a path with the base path. """
         # Ensure paths are OS-agnostic
         return os.path.normpath(os.path.join(self._base_path, path))
