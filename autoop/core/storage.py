@@ -5,161 +5,101 @@ from glob import glob
 
 
 class NotFoundError(Exception):
-    """Exception raised when a specified path cannot be found."""
-
-    def __init__(self, path: str) -> None:
-        """
-        Initialize the NotFoundError with the missing path.
-
-        Args:
-            path (str): The path that was not found.
-        """
+    def __init__(self, path):
         super().__init__(f"Path not found: {path}")
 
 
 class Storage(ABC):
-    """Abstract base class defining a storage interface."""
-
+    """ A class representing a storage system. """
     @abstractmethod
-    def save(self, data: bytes, path: str) -> None:
+    def save(self, data: bytes, path: str):
         """
-        Save data to a specified path.
-
+        Save data to a given path
         Args:
-            data (bytes): Data to be saved.
-            path (str): Path where the data will be saved.
+            data (bytes): Data to save
+            path (str): Path to save data
         """
         pass
 
     @abstractmethod
     def load(self, path: str) -> bytes:
         """
-        Load data from a specified path.
-
+        Load data from a given path
         Args:
-            path (str): Path from which to load data.
-
+            path (str): Path to load data
         Returns:
-            bytes: The loaded data.
+            bytes: Loaded data
         """
         pass
 
     @abstractmethod
-    def delete(self, path: str) -> None:
+    def delete(self, path: str):
         """
-        Delete data at a specified path.
-
+        Delete data at a given path
         Args:
-            path (str): Path of the data to delete.
+            path (str): Path to delete data
         """
         pass
 
     @abstractmethod
-    def list(self, path: str) -> List[str]:
+    def list(self, path: str) -> list:
         """
-        List all files under a specified path.
-
+        List all paths under a given path
         Args:
-            path (str): Path to list files under.
-
+            path (str): Path to list
         Returns:
-            List[str]: A list of file paths.
+            list: List of paths
         """
         pass
 
 
 class LocalStorage(Storage):
-    """A class representing a local storage system using the file system."""
-
+    """ A class representing a local storage system. """
     def __init__(self, base_path: str = "./assets") -> None:
-        """
-        Initialize the LocalStorage with a base path for storage.
-
-        Args:
-            base_path (str): Base directory for storage.
-        """
+        """ Initialize the local storage system. """
         self._base_path = os.path.normpath(base_path)
         if not os.path.exists(self._base_path):
             os.makedirs(self._base_path)
 
     def save(self, data: bytes, key: str) -> None:
-        """
-        Save data to the storage under the specified key.
-
-        Args:
-            data (bytes): Data to be saved.
-            key (str): Key or path to store the data under.
-        """
+        """ Save data to a given path. """
         path = self._join_path(key)
+        # Ensure parent directories are created
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, 'wb') as f:
             f.write(data)
 
     def load(self, key: str) -> bytes:
-        """
-        Load data from the storage using the specified key.
-
-        Args:
-            key (str): Key or path to load data from.
-
-        Returns:
-            bytes: The loaded data.
-        """
+        """ Load data from a given path"""
         path = self._join_path(key)
         self._assert_path_exists(path)
         with open(path, 'rb') as f:
             return f.read()
 
     def delete(self, key: str = "/") -> None:
-        """
-        Delete data from the storage at the specified key.
-
-        Args:
-            key (str): Key or path to delete data from.
-        """
+        """ Delete data at a given path. """
         path = self._join_path(key)
         self._assert_path_exists(path)
         os.remove(path)
 
     def list(self, prefix: str = "/") -> List[str]:
-        """
-        List all files under the specified prefix path.
-
-        Args:
-            prefix (str): Prefix path to list files under.
-
-        Returns:
-            List[str]: List of relative file paths under the prefix.
-        """
+        """ List all paths under a given path. """
         path = self._join_path(prefix)
         self._assert_path_exists(path)
+        # Use os.path.join for compatibility across platforms
         keys = glob(os.path.join(path, "**", "*"), recursive=True)
         return [
-            os.path.relpath(p, self._base_path) for
-            p in keys if os.path.isfile(p)
-        ]
+            os.path.relpath(
+                p, self._base_path
+                ) for p in keys if os.path.isfile(p)
+            ]
 
     def _assert_path_exists(self, path: str) -> None:
-        """
-        Check if a path exists and raise NotFoundError if it doesn't.
-
-        Args:
-            path (str): Path to check.
-
-        Raises:
-            NotFoundError: If the path does not exist.
-        """
+        """ Assert that a path exists"""
         if not os.path.exists(path):
             raise NotFoundError(path)
 
     def _join_path(self, path: str) -> str:
-        """
-        Combine a relative path with the base path.
-
-        Args:
-            path (str): Path to combine with the base path.
-
-        Returns:
-            str: The resulting full path.
-        """
+        """ Join a path with the base path. """
+        # Ensure paths are OS-agnostic
         return os.path.normpath(os.path.join(self._base_path, path))

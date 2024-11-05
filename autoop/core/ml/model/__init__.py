@@ -1,22 +1,3 @@
-"""
-Module for importing and accessing classification and regression models.
-
-Imports:
-    - Classification models: LogisticRegressionModel, \
-DecisionTreeClassifierModel, RandomForestClassifierModel.
-    - Regression models: LinearRegressionModel, RidgeRegressionModel, \
-DecisionTreeRegressorModel.
-
-Constants:
-    REGRESSION_MODELS: List of available regression model names.
-    CLASSIFICATION_MODELS: List of available classification model names.
-
-Functions:
-    get_model(model_name: str) -> Model:
-        Factory function to retrieve a model instance by name. Raises \
-ValueError if the model is not recognized.
-"""
-
 from autoop.core.ml.model.model import Model
 from autoop.core.ml.model.classification import (
     LogisticRegressionModel,
