@@ -262,14 +262,12 @@ are missing in the dataset: {missing_columns}")
                         # 'weighted' average for relevant metrics
                         train_metric = metric_func(
                             y_train, model.predict(X_train), average='weighted'
-                            )
+                        )
                         test_metric = metric_func(
-                            y_test, model.predict(X_test), average='weighted'
-                            )
+                            y_test, model.predict(X_test), average='weighted')
                     else:
                         train_metric = metric_func(
-                            y_train, model.predict(X_train)
-                            )
+                            y_train, model.predict(X_train))
                         test_metric = metric_func(
                             y_test, model.predict(X_test))
 
