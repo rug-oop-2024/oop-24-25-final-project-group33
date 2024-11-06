@@ -1,3 +1,4 @@
+""" Module to manage the creation of model instances. """
 from autoop.core.ml.model.model import Model
 from autoop.core.ml.model.classification import (
     LogisticRegressionModel,

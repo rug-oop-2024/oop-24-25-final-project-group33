@@ -80,10 +80,10 @@ the pipeline execution to be saved."""
         }
         artifacts.append(
             Artifact(name="pipeline_config", data=pickle.dumps(pipeline_data))
-            )
+        )
         artifacts.append(
             self._model.to_artifact(name=f"pipeline_model_{self._model.type}")
-            )
+        )
 
         return artifacts
 
@@ -95,11 +95,11 @@ the pipeline execution to be saved."""
         """Preprocess the input and target features."""
         (target_feature_name, target_data, artifact) = preprocess_features(
             [self._target_feature], self._dataset
-            )[0]
+        )[0]
         self._register_artifact(target_feature_name, artifact)
         input_results = preprocess_features(
             self._input_features, self._dataset
-            )
+        )
         for (feature_name, data, artifact) in input_results:
             self._register_artifact(feature_name, artifact)
         # Get the input vectors and output vector,
@@ -107,7 +107,7 @@ the pipeline execution to be saved."""
         self._output_vector = target_data
         self._input_vectors = [
             data for (feature_name, data, artifact) in input_results
-            ]
+        ]
 
     def _split_data(self) -> None:
         """Split the data into training and testing sets."""
@@ -115,16 +115,16 @@ the pipeline execution to be saved."""
         split = self._split
         self._train_X = [
             vector[:int(split * len(vector))] for vector in self._input_vectors
-            ]
+        ]
         self._test_X = [
             vector[int(split * len(vector)):] for vector in self._input_vectors
-            ]
+        ]
         self._train_y = self._output_vector[
             :int(split * len(self._output_vector))
-            ]
+        ]
         self._test_y = self._output_vector[
             int(split * len(self._output_vector)):
-            ]
+        ]
 
     def _compact_vectors(self, vectors: List[np.array]) -> np.array:
         """Combine the input vectors into a single matrix."""
@@ -160,7 +160,7 @@ the pipeline execution to be saved."""
         train_metrics_results = [
             (
                 metric, metric.evaluate(train_predictions, train_Y)
-                ) for metric in self._metrics
+            ) for metric in self._metrics
         ]
 
         # Evaluate on test (evaluation) set
@@ -170,7 +170,7 @@ the pipeline execution to be saved."""
         test_metrics_results = [
             (
                 metric, metric.evaluate(test_predictions, test_Y)
-                ) for metric in self._metrics
+            ) for metric in self._metrics
         ]
 
         # Return both training and test metrics
