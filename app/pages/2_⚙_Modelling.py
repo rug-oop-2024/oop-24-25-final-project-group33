@@ -186,7 +186,7 @@ Please select different features.")
             # Ensure selected columns are in the DataFrame
             missing_columns = [
                 col for col in selected_columns if col not in df.columns
-                ]
+            ]
             if missing_columns:
                 raise KeyError(f"The following columns \
 are missing in the dataset: {missing_columns}")
