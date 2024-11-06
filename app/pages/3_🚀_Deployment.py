@@ -187,7 +187,7 @@ required features: {', '.join(missing_features)}")
                             unique, counts = np.unique(
                                 predictions,
                                 return_counts=True
-                                )
+                            )
                             class_distribution = dict(zip(unique, counts))
                             total_predictions = len(predictions)
                             class_distribution_text = "<br>".join(
@@ -195,7 +195,7 @@ required features: {', '.join(missing_features)}")
                                     f"Class {i}: {j}"
                                     for i, j in class_distribution.items()
                                 ]
-                                )
+                            )
                             st.markdown(
                                 "<div class='summary-box'>"
                                 f"<strong>Total Predictions:</strong> \
@@ -204,7 +204,7 @@ required features: {', '.join(missing_features)}")
                                 + class_distribution_text +
                                 "</div>",
                                 unsafe_allow_html=True
-                                )
+                            )
             else:
                 st.error(f"Model file not found for pipeline\
 '{selected_pipeline_name}'.")
