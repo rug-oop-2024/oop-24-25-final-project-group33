@@ -196,13 +196,13 @@ are missing in the dataset: {missing_columns}")
             # Confirm target feature is in data columns after selection
             if target_feature not in data.columns:
                 raise KeyError(f"The target feature \
-'{target_feature}' is missing from the selected data columns.")
+'{target_feature}' is missing from the selected data columns."
+                )
 
             # One-hot encode categorical features in input_features
             for col in input_features:
                 if col in data.columns and pd.api.types.is_object_dtype(
-                    data[col]
-                ):
+                        data[col]):
                     # Apply one-hot encoding with individual
                     # prefixes for each categorical column
                     data = pd.get_dummies(data, columns=[col], prefix=col)
