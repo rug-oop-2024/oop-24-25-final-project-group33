@@ -112,7 +112,8 @@ Please select different features.")
 
         # Determine task type based on target feature type
         # Determine task type based on target feature type
-        task_type = 'classification' if df[target_feature].dtype == 'object' else 'regression'
+        task_type = 'classification' if df[target_feature].dtype == 'object\
+' else 'regression'
         st.write(f"Detected task type: **{task_type.capitalize()}**")
 
         # Dynamically set model options based on task type

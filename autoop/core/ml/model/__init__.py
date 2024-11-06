@@ -24,7 +24,34 @@ CLASSIFICATION_MODELS = [
 
 
 def get_model(model_name: str) -> Model:
-    """Factory function to get a model by name."""
+    """
+    Factory function to retrieve a model instance by name.
+
+    Args:
+        model_name (str): The name of the model to retrieve.
+                          Must be one of the names listed in \
+`REGRESSION_MODELS` or `CLASSIFICATION_MODELS`.
+
+    Returns:
+        Model: An instance of the specified model.
+
+    Raises:
+        ValueError: If `model_name` does not match any known model.
+
+    Available Models:
+        - Classification:
+            "Logistic Regression": Returns a LogisticRegressionModel instance.
+            "Decision Tree Classifier": \
+Returns a DecisionTreeClassifierModel instance.
+            "Random Forest Classifier": \
+Returns a RandomForestClassifierModel instance.
+
+        - Regression:
+            "Linear Regression": Returns a LinearRegressionModel instance.
+            "Ridge Regression": Returns a RidgeRegressionModel instance.
+            "Decision Tree Regressor": \
+Returns a DecisionTreeRegressorModel instance.
+    """
     if model_name == "Logistic Regression":
         return LogisticRegressionModel()
     elif model_name == "Decision Tree Classifier":
