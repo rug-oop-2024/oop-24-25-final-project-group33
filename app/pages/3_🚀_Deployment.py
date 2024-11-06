@@ -200,9 +200,8 @@ required features: {', '.join(missing_features)}")
                                 "<div class='summary-box'>"
                                 f"<strong>Total Predictions:</strong> \
 {total_predictions}<br>"
-                                "<strong>Class Distribution:</strong><br>"
-                                + class_distribution_text +
-                                "</div>",
+                                "<strong>\
+Class Distribution:</strong><br>" + class_distribution_text + "</div>",
                                 unsafe_allow_html=True
                             )
             else:
