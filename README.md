@@ -153,32 +153,32 @@ If you did not implement the feature
 
 | Requirement                           | Type (FN/NF) | Implemented by       | Implementation Completed (add X if done) | Comment |
 |-------------------------------------- |--------------|----------------------|--------------------------|---------|         
-| Up-to-date requirements.txt           | NF           |                      |         | |
-| `ML/detect-features`                  | FN           |                      |         | |
-| `ML/artifact`                         | NF           |                      |         | |
-| `ML/feature`                          | NF           |                      |         | |
-| `ML/metric`                           | NF           |                      |         | |
-| `ML/metric/extensions`                | FN           |                      |         | |
-| `ML/model`                            | NF           |                      |         | |
-| `ML/model/extensions`                 | FN           |                      |         | |
-| `ML/pipeline/evaluation`              | FN           |                      |         | | 
-| `ST/page/datasets`                    | NF           |                      |         | |
-| `ST/datasets/management/create`       | FN           |                      |         | |
-| `ST/datasets/management/save`         | FN           |                      |         | |
-| `ST/page/modelling`                   | NF           |                      |         | |
-| `ST/modelling/datasets/list`          | FN           |                      |         | |
-| `ST/modelling/datasets/features`      | FN           |                      |         | |
-| `ST/modelling/models`                 | FN           |                      |         | |
-| `ST/modelling/pipeline/split`         | FN           |                      |         | |
-| `ST/modelling/pipeline/metrics`       | FN           |                      |         | |
-| `ST/modelling/pipeline/summary`       | FN           |                      |         | |
-| `ST/modelling/pipeline/train`         | FN           |                      |         | |
-| `ST/modelling/pipeline/save`          | FN           |                      |         | |
-| `ST/page/deployment`                  | FN           |                      |         | |
-| `ST/deployment/load`                  | FN           |                      |         | |
-| `ST/deployment/predict`               | FN           |                      |         | |
+| Up-to-date requirements.txt           | NF           | Artiom and Marcel    |    X     | |
+| `ML/detect-features`                  | FN           | Artiom and Marcel    |     X    | |
+| `ML/artifact`                         | NF           | Artiom and Marcel    |      X   | |
+| `ML/feature`                          | NF           | Artiom and Marcel    |       X  | |
+| `ML/metric`                           | NF           | Artiom and Marcel    |        X | |
+| `ML/metric/extensions`                | FN           | Artiom and Marcel    |         X| |
+| `ML/model`                            | NF           | Artiom and Marcel    |   X      | |
+| `ML/model/extensions`                 | FN           | Artiom and Marcel    |    X     | |
+| `ML/pipeline/evaluation`              | FN           | Artiom and Marcel    |     X    | | 
+| `ST/page/datasets`                    | NF           | Artiom and Marcel    |       X  | |
+| `ST/datasets/management/create`       | FN           | Artiom and Marcel    |      X   | |
+| `ST/datasets/management/save`         | FN           | Artiom and Marcel    |        X | |
+| `ST/page/modelling`                   | NF           | Artiom and Marcel    |     X    | |
+| `ST/modelling/datasets/list`          | FN           | Artiom and Marcel    |      X   | |
+| `ST/modelling/datasets/features`      | FN           | Artiom and Marcel    |       X  | |
+| `ST/modelling/models`                 | FN           | Artiom and Marcel    |        X | |
+| `ST/modelling/pipeline/split`         | FN           | Artiom and Marcel    |      X   | |
+| `ST/modelling/pipeline/metrics`       | FN           | Artiom and Marcel    |     X    | |
+| `ST/modelling/pipeline/summary`       | FN           | Artiom and Marcel    |       X  | |
+| `ST/modelling/pipeline/train`         | FN           | Artiom and Marcel    |        X | |
+| `ST/modelling/pipeline/save`          | FN           | Artiom and Marcel    |         X| |
+| `ST/page/deployment`                  | FN           | Artiom and Marcel    |      X   | |
+| `ST/deployment/load`                  | FN           | Artiom and Marcel    |       X  | |
+| `ST/deployment/predict`               | FN           | Artiom and Marcel    |        X | |
 
 If you add extra features, please indicate them below:
 | Requirement                           | Type (FN/NF) | Implemented by       | Implementation Completed (add X if done) | Comment |
 |-------------------------------------- |--------------|----------------------|---------|-----|
-|           |            |                      |         | |
+|Visual output of the trained and actual models           |    NF        |     Artiom and Marcell               |   X      | added suing matplot lib and seaborn|
