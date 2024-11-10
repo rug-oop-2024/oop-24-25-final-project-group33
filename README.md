@@ -151,34 +151,35 @@ If the feature has been implemented by both students, write `both`.
 
 If you did not implement the feature
 
-| Requirement                           | Type (FN/NF) | Implemented by       | Implementation Completed (add X if done) | Comment |
-|-------------------------------------- |--------------|----------------------|--------------------------|---------|         
-| Up-to-date requirements.txt           | NF           |                      |         | |
-| `ML/detect-features`                  | FN           |                      |         | |
-| `ML/artifact`                         | NF           |                      |         | |
-| `ML/feature`                          | NF           |                      |         | |
-| `ML/metric`                           | NF           |                      |         | |
-| `ML/metric/extensions`                | FN           |                      |         | |
-| `ML/model`                            | NF           |                      |         | |
-| `ML/model/extensions`                 | FN           |                      |         | |
-| `ML/pipeline/evaluation`              | FN           |                      |         | | 
-| `ST/page/datasets`                    | NF           |                      |         | |
-| `ST/datasets/management/create`       | FN           |                      |         | |
-| `ST/datasets/management/save`         | FN           |                      |         | |
-| `ST/page/modelling`                   | NF           |                      |         | |
-| `ST/modelling/datasets/list`          | FN           |                      |         | |
-| `ST/modelling/datasets/features`      | FN           |                      |         | |
-| `ST/modelling/models`                 | FN           |                      |         | |
-| `ST/modelling/pipeline/split`         | FN           |                      |         | |
-| `ST/modelling/pipeline/metrics`       | FN           |                      |         | |
-| `ST/modelling/pipeline/summary`       | FN           |                      |         | |
-| `ST/modelling/pipeline/train`         | FN           |                      |         | |
-| `ST/modelling/pipeline/save`          | FN           |                      |         | |
-| `ST/page/deployment`                  | FN           |                      |         | |
-| `ST/deployment/load`                  | FN           |                      |         | |
-| `ST/deployment/predict`               | FN           |                      |         | |
+| Requirement                           | Type (FN/NF) | Implemented by       | Implementation Completed (add X if done) | Comment                                                                                           |
+|---------------------------------------|--------------|----------------------|------------------------------------------|---------------------------------------------------------------------------------------------------|
+| Up-to-date requirements.txt           | NF           | Artiom and Marcell    | X                                        | Lists all dependencies and libraries used for the project, ensuring reproducibility.               |
+| `ML/detect-features`                  | FN           | Artiom and Marcell    | X                                        | Module that automatically detects and classifies features (e.g., numerical, categorical).          |
+| `ML/artifact`                         | NF           | Artiom and Marcell    | X                                        | Stores and manages model artifacts for easy loading, saving, and version control.                 |
+| `ML/feature`                          | NF           | Artiom and Marcell    | X                                        | Defines individual feature objects, including metadata for data preprocessing and modeling.       |
+| `ML/metric`                           | NF           | Artiom and Marcell    | X                                        | Provides a set of evaluation metrics for model performance assessment (e.g., accuracy, MSE).      |
+| `ML/metric/extensions`                | FN           | Artiom and Marcell    | X                                        | Extends metrics for custom use cases, supporting additional evaluation metrics if needed.         |
+| `ML/model`                            | NF           | Artiom and Marcell    | X                                        | Core model interface or abstract class for creating and managing ML models.                       |
+| `ML/model/extensions`                 | FN           | Artiom and Marcell    | X                                        | Extensions to the core model, including additional algorithms or customized model behavior.       |
+| `ML/pipeline/evaluation`              | FN           | Artiom and Marcell    | X                                        | Handles model evaluation by calculating performance metrics and selecting the best model.         |
+| `ST/page/datasets`                    | NF           | Artiom and Marcell    | X                                        | Streamlit page to display and manage datasets, allowing users to view and select datasets.        |
+| `ST/datasets/management/create`       | FN           | Artiom and Marcell    | X                                        | Allows users to create and register new datasets within the system for use in ML pipelines.       |
+| `ST/datasets/management/save`         | FN           | Artiom and Marcell    | X                                        | Enables saving and organizing datasets, ensuring data persistence within the application.         |
+| `ST/page/modelling`                   | NF           | Artiom and Marcell    | X                                        | Main Streamlit page for model selection, feature selection, and pipeline creation.                |
+| `ST/modelling/datasets/list`          | FN           | Artiom and Marcell    | X                                        | Lists all available datasets within the modelling page, enabling easy selection for users.        |
+| `ST/modelling/datasets/features`      | FN           | Artiom and Marcell    | X                                        | Allows users to select and configure features for model training from the chosen dataset.         |
+| `ST/modelling/models`                 | FN           | Artiom and Marcell    | X                                        | Lists available models for training, allowing users to select the desired algorithm.              |
+| `ST/modelling/pipeline/split`         | FN           | Artiom and Marcell    | X                                        | Configures the train/test split ratio for the dataset to be used in model training.               |
+| `ST/modelling/pipeline/metrics`       | FN           | Artiom and Marcell    | X                                        | Allows users to select evaluation metrics to assess model performance during training.            |
+| `ST/modelling/pipeline/summary`       | FN           | Artiom and Marcell    | X                                        | Displays a summary of the configured pipeline, showing selected features, model, and metrics.     |
+| `ST/modelling/pipeline/train`         | FN           | Artiom and Marcell    | X                                        | Initiates model training based on the configured pipeline, using the selected dataset and split.  |
+| `ST/modelling/pipeline/save`          | FN           | Artiom and Marcell    | X                                        | Saves the trained model and pipeline configuration, allowing for future loading and deployment.   |
+| `ST/page/deployment`                  | FN           | Artiom and Marcell    | X                                        | Streamlit page for deploying trained models, enabling predictions on new data.                    |
+| `ST/deployment/load`                  | FN           | Artiom and Marcell    | X                                        | Loads a saved model or pipeline for use in the deployment environment, allowing predictions.      |
+| `ST/deployment/predict`               | FN           | Artiom and Marcelll    | X                                        | Provides a prediction interface to input data and obtain results from the deployed model.         |
 
 If you add extra features, please indicate them below:
-| Requirement                           | Type (FN/NF) | Implemented by       | Implementation Completed (add X if done) | Comment |
-|-------------------------------------- |--------------|----------------------|---------|-----|
-|           |            |                      |         | |
+
+| Requirement                                      | Type (FN/NF) | Implemented by       | Implementation Completed (add X if done) | Comment                                                       |
+|--------------------------------------------------|--------------|----------------------|------------------------------------------|---------------------------------------------------------------|
+| Visual output of the trained and actual models   | NF           | Artiom and Marcelll    | X                                        | Added visualizations using matplotlib and seaborn for clarity. |
