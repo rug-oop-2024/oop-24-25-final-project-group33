@@ -1,4 +1,3 @@
-
 import json
 from typing import Tuple, List, Union
 import os
@@ -7,9 +6,29 @@ from autoop.core.storage import Storage
 
 
 class Database():
-    """A simple key-value database"""
+    """
+    A simple key-value database.
+    Methods:
+        set(collection: str, id: str, entry: dict) -> dict:
+            Set a key in the database.
+        get(collection: str, id: str) -> Union[dict, None]:
+            Get a key from the database.
+        delete(collection: str, id: str) -> None:
+            Delete a key from the database.
+        list(collection: str) -> List[Tuple[str, dict]]:
+            Lists all data in a collection.
+        refresh() -> None:
+        _persist() -> None:
+        _load() -> None:
+    """
     def __init__(self, storage: Storage) -> None:
-        """Initialize the database"""
+        """
+        Initialize the database with storage and load data.
+        Args:
+            storage (Storage): The storage instance to use.
+        Returns:
+            None
+        """
         self._storage = storage
         self._data = {}
         self._load()
@@ -72,11 +91,21 @@ and data for each item in the collection
         return [(id, data) for id, data in self._data[collection].items()]
 
     def refresh(self) -> None:
-        """Refresh the database by loading the data from storage"""
+        """
+        Refresh the database by loading the data from storage.
+        Returns:
+            None
+        """
         self._load()
 
     def _persist(self) -> None:
-        """Persist the data to storage"""
+        """
+        Persist data to storage and remove deleted items.
+        Args:
+            None
+        Returns:
+            None
+        """
         for collection, data in self._data.items():
             if not data:
                 continue
@@ -94,7 +123,9 @@ and data for each item in the collection
                 self._storage.delete(f"{collection}{os.sep}{id}")
 
     def _load(self) -> None:
-        """Load the data from storage"""
+        """
+        Load data from storage into _data dictionary.
+        """
         self._data = {}
         for key in self._storage.list(""):
             collection, id = key.split(os.sep)[-2:]

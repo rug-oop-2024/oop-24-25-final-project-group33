@@ -17,7 +17,11 @@ os.makedirs(OBJECTS_DIR, exist_ok=True)
 
 # Function to load the registry
 def load_registry() -> list:
-    """ Load the registry file """
+    """
+    Load registry from file if exists, else return empty list.
+    Returns:
+        list: The registry data.
+    """
     if os.path.exists(REGISTRY_FILE):
         with open(REGISTRY_FILE, 'r') as f:
             registry = json.load(f)
@@ -28,14 +32,22 @@ def load_registry() -> list:
 
 # Function to save the registry
 def save_registry(registry: list) -> None:
-    """ Save the registry file """
+    """
+    Save the registry to a file.
+    Args:
+        registry (list): The registry data to save.
+    Returns:
+        None
+    """
     with open(REGISTRY_FILE, 'w') as f:
         json.dump(registry, f, indent=4)
 
 
 # Function to get dataset files from the registry
 def get_dataset_files() -> list:
-    """ Get the list of dataset files from the registry """
+    """
+    Returns a list of dataset file names from the registry.
+    """
     registry = load_registry()
     dataset_files = [e['name'] for e in registry if e['type'] == 'dataset']
     return dataset_files
@@ -48,7 +60,9 @@ if 'dataset_files' not in st.session_state:
 
 # Function to refresh dataset list
 def refresh_datasets() -> None:
-    """ Refresh the list of datasets """
+    """
+    Refresh dataset files in session state.
+    """
     st.session_state['dataset_files'] = get_dataset_files()
 
 
@@ -92,7 +106,13 @@ if st.session_state['dataset_files']:
 
     # Function to delete dataset
     def delete_dataset() -> None:
-        """ Delete the selected dataset """
+        """
+        Deletes the selected dataset and updates the registry.
+        Parameters:
+        None
+        Returns:
+        None
+        """
         dataset_path = os.path.join(
             OBJECTS_DIR, f"{selected_dataset_name}.csv")
         if os.path.exists(dataset_path):
@@ -151,7 +171,16 @@ if uploaded_file:
 
     # Function to save the dataset
     def save_dataset() -> None:
-        """ Save the uploaded dataset """
+        """
+        Save the dataset and update the registry.
+        Saves the dataset to a CSV file, updates the registry with the new
+        dataset entry, and refreshes the dataset list. Increments counters
+        to reset widgets and triggers a rerun.
+        Args:
+            None
+        Returns:
+            None
+        """
         if dataset_name:
             dataset_path = os.path.join(OBJECTS_DIR, dataset_name + '.csv')
             if os.path.exists(dataset_path):

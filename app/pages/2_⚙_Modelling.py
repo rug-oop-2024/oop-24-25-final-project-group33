@@ -32,7 +32,11 @@ os.makedirs(PIPELINES_DIR, exist_ok=True)
 
 # Load datasets from the registry
 def load_registry() -> List[dict]:
-    """Load the dataset registry from the assets directory."""
+    """
+    Load registry data from 'assets/registry.json' if it exists.
+    Returns:
+        List[dict]: List of registry entries or empty list if file not found.
+    """
     ASSETS_DIR = 'assets'
     REGISTRY_FILE = os.path.join(ASSETS_DIR, 'registry.json')
     if os.path.exists(REGISTRY_FILE):
@@ -174,7 +178,17 @@ Please select different features.")
 
         # Function to preprocess data and handle categorical features
         def preprocess_data(df, input_features, target_feature, task_type):
-            """Preprocess the data before splitting and training."""
+            """
+            Preprocesses the dataset for modeling.
+            Args:
+                df (pd.DataFrame): The input dataset.
+                input_features (list): List of input feature names.
+                target_feature (str): The target feature name.
+                task_type (str): Type of task ('classification' or
+                'regression').
+            Returns:
+                pd.DataFrame: The preprocessed dataset.
+            """
             # Ensure df is a DataFrame
             if not isinstance(df, pd.DataFrame):
                 raise TypeError("The provided dataset is not a DataFrame.")

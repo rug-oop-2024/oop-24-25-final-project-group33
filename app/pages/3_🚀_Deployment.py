@@ -50,13 +50,23 @@ if not os.path.exists(PIPELINES_DIR):
 
 # Function to get list of saved pipelines
 def get_saved_pipelines() -> list:
-    """ Get the list of saved pipelines """
+    """
+    Fetches and returns a list of saved pipeline JSON files.
+    Returns:
+        list: List of filenames ending with '.json'.
+    """
     return [f for f in os.listdir(PIPELINES_DIR) if f.endswith('.json')]
 
 
 # Function to delete a pipeline
 def delete_pipeline(pipeline_name):
-    """ Delete the selected pipeline and associated model file. """
+    """
+    Deletes a pipeline and its model file.
+    Args:
+        pipeline_name (str): Name of the pipeline to delete.
+    Returns:
+        None
+    """
     pipeline_path = os.path.join(PIPELINES_DIR, f"{pipeline_name}.json")
     model_file_path = os.path.join(PIPELINES_DIR, f"{pipeline_name}_model.pkl")
     # Delete the pipeline JSON file
@@ -81,7 +91,9 @@ if 'pipelines' not in st.session_state:
 
 # Function to refresh pipelines list
 def refresh_pipelines() -> None:
-    """ Refresh the list of saved pipelines """
+    """
+    Refreshes the pipelines in session state.
+    """
     st.session_state['pipelines'] = get_saved_pipelines()
 
 

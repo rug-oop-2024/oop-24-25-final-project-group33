@@ -18,7 +18,14 @@ class NotFoundError(Exception):
 
 
 class Storage(ABC):
-    """Abstract base class defining a storage interface."""
+    """
+    Abstract base class defining a storage interface.
+    Methods:
+        save(data: bytes, path: str) -> None:
+        load(path: str) -> bytes:
+        delete(path: str) -> None:
+        list(path: str) -> List[str]:
+    """
 
     @abstractmethod
     def save(self, data: bytes, path: str) -> None:
